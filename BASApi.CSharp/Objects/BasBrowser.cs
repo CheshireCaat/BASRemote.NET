@@ -10,7 +10,7 @@ namespace BASApi.CSharp.Objects
         public int BrowserId { get; set; }
 
         /// <inheritdoc />
-        [JsonProperty("task_id")]
-        public int TaskId { get; set; }
+        [JsonProperty("task_id", NullValueHandling = NullValueHandling.Ignore)]
+        public int? TaskId { get; set; }
     }
 }

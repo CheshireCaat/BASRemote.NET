@@ -59,5 +59,11 @@ namespace BASApi.CSharp.Interfaces
         /// </summary>
         /// <param name="name"></param>
         void GetGlobalVariable(string name);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="isInstant"></param>
+        void Stop(bool isInstant);
     }
 }

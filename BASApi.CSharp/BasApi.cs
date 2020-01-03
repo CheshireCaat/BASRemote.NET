@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using BASApi.CSharp.Interfaces;
 using BASApi.CSharp.Objects;
+using Newtonsoft.Json;
 using WebSocketSharp;
 
 namespace BASApi.CSharp
@@ -10,6 +12,8 @@ namespace BASApi.CSharp
     // TODO: Should this class be static or singleton?
     public sealed class BasApi : IBasApi
     {
+        private static readonly Random _sendRandom = new Random();
+
         /// <summary>
         /// </summary>
         private readonly List<IBasBrowser> _browsers = new List<IBasBrowser>();
@@ -18,15 +22,26 @@ namespace BASApi.CSharp
         /// </summary>
         private readonly List<IBasTask> _tasks = new List<IBasTask>();
 
-        private string _buffer;
+        private string _buffer = "";
         private WebSocket _socket;
 
         /// <inheritdoc />
         public int Send(string type, object data, bool async = false)
         {
-            return 0;
+            var id = _sendRandom.Next(100000, 999999);
+
+            dynamic d = new {type, data, id};
+
+            if (async)
+                d.async = true;
+
+            var msg = JsonConvert.SerializeObject(d) + "---Message--End---";
+            Debug.WriteLine($"[SEND] - {msg}");
+            _socket.Send(msg);
+            return id;
         }
 
+        // TODO: Get correct port without user interface?
         /// <inheritdoc />
         public void Init(int port)
         {
@@ -36,6 +51,7 @@ namespace BASApi.CSharp
 
             _socket.OnMessage += (sender, args) =>
             {
+                Debug.WriteLine(args.Data);
                 _buffer += args.Data;
                 var split = _buffer.Split(
                     new[] {"---Message--End---"},
@@ -88,6 +104,13 @@ namespace BASApi.CSharp
         public void GetGlobalVariable(string name)
         {
             throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public void Stop(bool isInstant)
+        {
+            object obj = new {is_instant = isInstant};
+            Send("stop", obj);
         }
 
         public IBasFunction RunFunction(string functionName, params (string Key, object Value)[] functionParameters)

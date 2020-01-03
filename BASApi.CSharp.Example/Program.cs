@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace BASApi.CSharp.Example
 {
@@ -6,7 +7,10 @@ namespace BASApi.CSharp.Example
     {
         private static void Main()
         {
-            //var api = new BasApi();
+            var Api = new BasApi();
+            Api.Init(11686);
+
+            Api.Stop(true);
 
             Console.ReadKey();
         }

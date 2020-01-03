@@ -4,6 +4,6 @@
     {
         int BrowserId { get; set; }
 
-        int TaskId { get; set; }
+        int? TaskId { get; set; }
     }
 }
