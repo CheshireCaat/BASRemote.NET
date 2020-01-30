@@ -6,8 +6,8 @@ namespace BASApi.CSharp.Objects
     public sealed class BasBrowser : IBasBrowser
     {
         /// <inheritdoc />
-        [JsonProperty("browser_id")]
-        public int BrowserId { get; set; }
+        [JsonProperty("browser_id", NullValueHandling = NullValueHandling.Ignore)]
+        public int? BrowserId { get; set; }
 
         /// <inheritdoc />
         [JsonProperty("task_id", NullValueHandling = NullValueHandling.Ignore)]
