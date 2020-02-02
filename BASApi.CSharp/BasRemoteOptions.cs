@@ -1,14 +1,13 @@
-﻿
-
-namespace BASApi.CSharp
+﻿namespace BASRemote
 {
-    public class BasRemoteOptions
+    public sealed class BasRemoteOptions
     {
         /// <summary>
         /// </summary>
-        public string WorkingDir { get; set; }
+        public string WorkingDirectory { get; set; }
 
         /// <summary>
+        ///     Name of the selected private script. 
         /// </summary>
         public string ScriptName { get; set; }
 

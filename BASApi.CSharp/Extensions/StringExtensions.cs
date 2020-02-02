@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BASApi.CSharp.Utility
+namespace BASRemote.Extensions
 {
     internal static class StringExtensions
     {

@@ -1,86 +1,150 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
+using System.Net;
+using System.Reactive;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using BASRemote.Exceptions;
+using BASRemote.Helpers;
+using BASRemote.Objects;
 using Flurl;
 using Flurl.Http;
-using Newtonsoft.Json;
+using SharpCompress.Archives;
+using SharpCompress.Archives.Zip;
+using SharpCompress.Common;
 
-namespace BASApi.CSharp.Services
+namespace BASRemote.Services
 {
     /// <summary>
+    ///     Provides methods for interacting with BAS engine.
     /// </summary>
-    internal sealed class EngineService : BaseService
+    internal sealed class EngineService : BaseService, IDisposable
     {
-        private const string Data = "FastExecuteScriptProtected";
+        private readonly Subject<Unit> _downloadSubject = new Subject<Unit>();
+
+        private readonly Subject<Unit> _extractSubject = new Subject<Unit>();
+
+        private FileStream _lock;
 
         /// <summary>
+        ///     Create an instance of <see cref="EngineService" /> class.
         /// </summary>
-        /// <param name="options"></param>
+        /// <param name="options">
+        ///     Remote control options.
+        /// </param>
         public EngineService(BasRemoteOptions options) : base(options)
         {
         }
 
-        private static int OsNumber => Environment.Is64BitOperatingSystem ? 64 : 32;
+        public Script Script { get; private set; }
 
-        private static string EngineFileName => $"{Data}.x{OsNumber}.zip";
+        private string EngineDirectory => Path.Combine(Options.WorkingDirectory, "engine", Script.EngineVersion);
 
-        private static string EnginePathName => $"{Data}{OsNumber}";
+        private string RunDirectory => Path.Combine(Options.WorkingDirectory, "run", Options.ScriptName);
 
-        public bool IsSupported => Version.Parse(ScriptVersion) >= Version.Parse("22.4.2");
+        private string ExeDirectory => Path.Combine(RunDirectory, Script.Hash);
 
-        public string ScriptVersion { get; private set; }
-
-        public string ScriptHash { get; private set; }
-
-        public async Task Initialize()
+        public void Dispose()
         {
-            var result = await "https://bablosoft.com"
+            _lock?.Dispose();
+            _lock = null;
+        }
+
+        public async Task InitializeAsync()
+        {
+            Script = await "https://bablosoft.com"
                 .AppendPathSegment("scripts")
                 .AppendPathSegment(Options.ScriptName)
                 .AppendPathSegment("properties")
-                .GetJsonAsync<ScriptProperties>();
+                .GetJsonAsync<Script>()
+                .ConfigureAwait(false);
 
-            ScriptVersion = result.ScriptVersion;
-            ScriptHash = result.ScriptHash;
+            //using (var client = new HttpClient())
+            //{
+            //    var result = await client.GetStringAsync($"https://bablosoft.com/scripts/{Options.ScriptName}/properties");
+            //    Script = JsonConvert.DeserializeObject<Script>(result);
+            //}
+            if (!Script.IsSupported) throw new ScriptNotSupportedException();
+            if (!Script.IsExist) throw new ScriptNotFoundException();
         }
 
-        public async Task<string> DownloadExecutable(string folder)
+        public async Task<string> DownloadExecutable(string zipName, string urlName)
         {
             return await "https://bablosoft.com"
                 .AppendPathSegment("distr")
-                .AppendPathSegment(EnginePathName)
-                .AppendPathSegment(ScriptVersion)
-                .AppendPathSegment(EngineFileName)
-                .DownloadFileAsync(folder);
+                .AppendPathSegment(urlName)
+                .AppendPathSegment(Script.EngineVersion)
+                .AppendPathSegment($"{zipName}.zip")
+                .DownloadFileAsync(EngineDirectory, $"{urlName}.zip");
         }
 
-        public async Task GetExecutable()
+        public async Task ExtractExecutable(string zipPath)
         {
-            var path = Path.Combine(Options.WorkingDir, "engine", ScriptVersion, EngineFileName);
+            _extractSubject.OnNext(Unit.Default);
 
-            if (!File.Exists(path)) await DownloadExecutable(Path.GetDirectoryName(path));
+            using (var archive = ZipArchive.Open(zipPath))
+            {
+                await Task.Run(() => archive.WriteToDirectory(ExeDirectory,
+                    new ExtractionOptions
+                    {
+                        ExtractFullPath = true
+                    }));
+            }
 
-            var destinationPath = Path.Combine(
-                Options.WorkingDir, "run",
-                Options.ScriptName,
-                ScriptHash.Substring(0, 5));
-
-            if (Directory.Exists(destinationPath)) return;
-
-            ZipFile.ExtractToDirectory(path, destinationPath);
+            _extractSubject.OnCompleted();
         }
 
-
-        public void RunExecutable(string path, int port)
+        public async Task StartEngineAsync(int port)
         {
+            var bitDepth = Environment.Is64BitOperatingSystem ? 64 : 32;
+            var zipName = $"FastExecuteScriptProtected.x{bitDepth}";
+            var urlName = $"FastExecuteScriptProtected{bitDepth}";
+
+            var zipPath = Path.Combine(EngineDirectory, $"{urlName}.zip");
+
+            if (!Directory.Exists(EngineDirectory))
+                await DownloadExecutable(zipName, urlName)
+                    .ConfigureAwait(false);
+
+            if (!Directory.Exists(ExeDirectory))
+                await ExtractExecutable(zipPath)
+                    .ConfigureAwait(false);
+
+            StartEngineProcess(port);
         }
 
-        private struct ScriptProperties
+        private void StartEngineProcess(int port)
         {
-            [JsonProperty("engversion")] public string ScriptVersion { get; set; }
+            Process.Start
+            (
+                new ProcessStartInfo
+                {
+                    Arguments = $"--remote-control --remote-control-port={port}",
+                    FileName = Path.Combine(ExeDirectory, "FastExecuteScript.exe"),
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            );
+        }
 
-            [JsonProperty("hash")] public string ScriptHash { get; set; }
+        private void ClearRunDirectory()
+        {
+            foreach (var directory in Directory.GetDirectories(RunDirectory))
+            {
+                var lockFile = Path.Combine(directory, ".lock");
+                if (!File.Exists(lockFile))
+                {
+                    Debug.WriteLine($"Lock file not exist in {directory}");
+                    Directory.Delete(directory, true);
+                }
+                else
+                {
+                    Debug.WriteLine($"Lock file exist in {directory}");
+                }
+            }
         }
     }
 }

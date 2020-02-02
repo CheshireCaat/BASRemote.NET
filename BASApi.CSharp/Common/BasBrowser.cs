@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BASApi.CSharp.Objects
+namespace BASRemote.Common
 {
     /// <inheritdoc />
     public sealed class BasBrowser : IBasBrowser

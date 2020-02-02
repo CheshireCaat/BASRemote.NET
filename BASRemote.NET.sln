@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASApi.CSharp", "BASApi.CSharp\BASApi.CSharp.csproj", "{DB81B150-DE02-48DB-AFE6-C9118A4525D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote", "BASApi.CSharp\BASRemote.csproj", "{DB81B150-DE02-48DB-AFE6-C9118A4525D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASApi.CSharp.Tests", "BASApi.CSharp.Tests\BASApi.CSharp.Tests.csproj", "{B90DF73E-0FF8-4C94-8354-D9A97021285B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote.Tests", "BASApi.CSharp.Tests\BASRemote.Tests.csproj", "{B90DF73E-0FF8-4C94-8354-D9A97021285B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASApi.CSharp.Example", "BASApi.CSharp.Example\BASApi.CSharp.Example.csproj", "{EF9087E2-CF2B-47B9-BB64-FCCFB6F27646}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote.Example", "BASApi.CSharp.Example\BASRemote.Example.csproj", "{EF9087E2-CF2B-47B9-BB64-FCCFB6F27646}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

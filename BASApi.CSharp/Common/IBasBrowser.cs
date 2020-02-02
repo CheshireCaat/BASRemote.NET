@@ -1,4 +1,4 @@
-﻿namespace BASApi.CSharp.Objects
+﻿namespace BASRemote.Common
 {
     public interface IBasBrowser
     {
