@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote.Tests", "BASRemot
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote.Integration.Tests", "BASRemote.Integration.Tests\BASRemote.Integration.Tests.csproj", "{AC0D3809-A0CF-4773-B3F7-819CDF909977}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote.Example", "BASRemote.Example\BASRemote.Example.csproj", "{EF9087E2-CF2B-47B9-BB64-FCCFB6F27646}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{AC0D3809-A0CF-4773-B3F7-819CDF909977}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC0D3809-A0CF-4773-B3F7-819CDF909977}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC0D3809-A0CF-4773-B3F7-819CDF909977}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF9087E2-CF2B-47B9-BB64-FCCFB6F27646}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF9087E2-CF2B-47B9-BB64-FCCFB6F27646}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF9087E2-CF2B-47B9-BB64-FCCFB6F27646}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF9087E2-CF2B-47B9-BB64-FCCFB6F27646}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

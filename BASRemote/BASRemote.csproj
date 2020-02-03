@@ -42,6 +42,7 @@
     <Compile Include="Exceptions\AlreadyRunningException.cs" />
     <Compile Include="Exceptions\ScriptNotExistException.cs" />
     <Compile Include="Exceptions\ScriptNotSupportedException.cs" />
+    <Compile Include="Exceptions\SocketNotConnectedException.cs" />
     <Compile Include="Helpers\RandomHelper.cs" />
     <Compile Include="Objects\FileDialogOptions.cs" />
     <Compile Include="Objects\Params.cs" />
