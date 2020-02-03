@@ -23,7 +23,13 @@ Build from source:
 # Dependencies
 This library has dependencies on several excellent libraries:
 
-[System.Reactive](https://github.com/dotnet/reactive)
+[C-Sharp-Promise](https://github.com/Real-Serious-Games/C-Sharp-Promise)
+
+[Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
+
+[WebSocketSharp](https://github.com/sta/websocket-sharp)
+
+[Flurl.Http](https://github.com/tmenier/Flurl)
 
 # License
 This project is licensed under the MIT license.
