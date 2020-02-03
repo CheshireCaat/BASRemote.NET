@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DB81B150-DE02-48DB-AFE6-C9118A4525D0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BASRemote</RootNamespace>
+    <AssemblyName>BASRemote</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BasRemoteClient.cs" />
+    <Compile Include="BasRemoteOptions.cs" />
+    <Compile Include="Exceptions\AlreadyRunningException.cs" />
+    <Compile Include="Exceptions\ScriptNotExistException.cs" />
+    <Compile Include="Exceptions\ScriptNotSupportedException.cs" />
+    <Compile Include="Helpers\RandomHelper.cs" />
+    <Compile Include="Objects\FileDialogOptions.cs" />
+    <Compile Include="Objects\Params.cs" />
+    <Compile Include="Common\BasBrowser.cs" />
+    <Compile Include="Objects\FunctionResult.cs" />
+    <Compile Include="Objects\Message.cs" />
+    <Compile Include="Common\BasTask.cs" />
+    <Compile Include="Common\BasThread.cs" />
+    <Compile Include="Common\IBasBrowser.cs" />
+    <Compile Include="IBasRemoteClient.cs" />
+    <Compile Include="Common\IBasTask.cs" />
+    <Compile Include="Common\IBasThread.cs" />
+    <Compile Include="Promises\IPromise.cs" />
+    <Compile Include="Promises\IPromise.Generic.cs" />
+    <Compile Include="Promises\Promise.cs" />
+    <Compile Include="Promises\Promise.Generic.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\EngineService.cs" />
+    <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\ISocketService.cs" />
+    <Compile Include="Services\SocketService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Flurl.Http">
+      <Version>3.0.0-pre3</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="RSG.Promise">
+      <Version>3.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="WebSocketSharp">
+      <Version>1.0.3-rc11</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
