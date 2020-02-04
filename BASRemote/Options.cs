@@ -6,6 +6,7 @@ namespace BASRemote
     public sealed class Options
     {
         /// <summary>
+        ///     Location of the working folder.
         /// </summary>
         public string WorkingDirectory { get; set; }
 

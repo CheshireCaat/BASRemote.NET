@@ -10,8 +10,10 @@ using WebSocketSharp;
 
 namespace BASRemote.Services
 {
-    /// <inheritdoc cref="ISocketService" />
-    internal sealed class SocketService : BaseService, ISocketService
+    /// <summary>
+    ///     Provides methods for interacting with a BAS socket.
+    /// </summary>
+    internal sealed class SocketService : BaseService
     {
         private WebSocket _socket;
 
@@ -26,16 +28,27 @@ namespace BASRemote.Services
         {
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        ///     Occurs when <see cref="SocketService"/> receives a message.
+        /// </summary>
         public event Action<Message> OnMessage;
 
-        /// <inheritdoc />
+        /// <summary>
+        ///     Occurs when <see cref="SocketService" /> connection has been closed.
+        /// </summary>
         public event Action OnClose;
 
-        /// <inheritdoc />
+        /// <summary>
+        ///     Occurs when <see cref="SocketService" /> connection has been opened.
+        /// </summary>
         public event Action OnOpen;
 
-        /// <inheritdoc />
+        /// <summary>
+        ///     Asynchronously start the socket service with the specified port.
+        /// </summary>
+        /// <param name="port">
+        ///     Selected port number.
+        /// </param>
         public async Task StartSocketAsync(int port)
         {
             _socket = new WebSocket($"ws://127.0.0.1:{port}")
@@ -47,7 +60,7 @@ namespace BASRemote.Services
             {
                 _buffer += args.Data;
 
-                var split = _buffer.Split(new[] {"---Message--End---"}, StringSplitOptions.None);
+                var split = _buffer.Split("---Message--End---");
 
                 foreach (var message in split)
                 {
@@ -57,7 +70,7 @@ namespace BASRemote.Services
                     }
                 }
 
-                Debug.WriteLine($"<-- {args.Data}");
+                //Debug.WriteLine($"<-- {args.Data}");
 
                 _buffer = split.Last();
             };
@@ -107,16 +120,24 @@ namespace BASRemote.Services
             await tcs.Task.ConfigureAwait(false);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="data"></param>
+        /// <param name="async"></param>
         public void SendAsync(string type, Params data, bool async = false)
         {
             SendAsync(new Message(data, type, async));
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
         public void SendAsync(Message message)
         {
-            Debug.WriteLine($"--> {message.ToJson()}");
+            //Debug.WriteLine($"--> {message.ToJson()}");
             _socket.SendAsync($"{message.ToJson()}---Message--End---", b => {});
         }
 

@@ -34,12 +34,14 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasRemoteClient.cs" />
     <Compile Include="BasFunction.cs" />
     <Compile Include="Extensions\ConvertExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Helpers\FileLock.cs" />
     <Compile Include="IBasFunction.cs" />
     <Compile Include="Interfaces\IClientContainer.cs" />
@@ -59,19 +61,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\EngineService.cs" />
-    <Compile Include="Services\IEngineService.cs" />
-    <Compile Include="Services\ISocketService.cs" />
     <Compile Include="Services\SocketService.cs" />
     <Compile Include="Helpers\Rand.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
-    </PackageReference>
     <PackageReference Include="WebSocketSharp">
       <Version>1.0.3-rc11</Version>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
+    </PackageReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

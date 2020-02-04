@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+	<metadata>
+		<id>BASRemote</id>
+		<version>1.0.0</version>
+		<authors>CheshireCaat</authors>
+		<owners>CheshireCaat</owners>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<license type="expression">MIT</license>
+		<projectUrl>https://github.com/CheshireCaat/BASRemote.NET</projectUrl>
+		<icon>tools\basremote-icon.png</icon>
+		<description>
+    	.NET library that allows you to remotely manage private scripts created using BAS. This uses a portable version of the engine to execute the script (FastExecuteScript). Interaction with the script is based on the same principles as the web interface (via the WebSocket connection).
+    	</description>
+		<copyright>Copyright 2020</copyright>
+		<language>en-US</language>
+		<tags>bas, bas remote, bas client, bas remote control, bas remote client</tags>
+		<dependencies>
+            <group targetFramework=".NETFramework4.8">
+            	<dependency id="WebSocketSharp" version="1.0.3-rc11" />
+            	<dependency id="Newtonsoft.Json" version="10.0.2" />   
+            </group>
+        </dependencies>
+	</metadata>
+	<files>
+    	<file src="..\tools\basremote-icon.png" target="tools\" />
+    </files>
+</package>

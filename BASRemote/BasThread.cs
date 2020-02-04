@@ -70,7 +70,7 @@ namespace BASRemote
                 Client.Send("start_thread", new Params {{"thread_id", Id}});
             }
 
-            Client.SendAsync<dynamic>("run_task",
+            Client.SendAsync<string>("run_task",
                 new Params
                 {
                     {"params", functionParams.ToJson()},

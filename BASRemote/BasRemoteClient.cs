@@ -56,16 +56,15 @@ namespace BASRemote
                 {
                     if (_requests.TryRemove(message.Id, out var function))
                     {
-                        //if (function.GetType().IsGenericType)
-                        //{
-                        //    ((Action<dynamic>) function)(message.Data);
-                        //}
-                        //else
-                        //{
-                        //    ((Action) function)();
-                        //}
-                        ((Action<dynamic>)function)(message.Data);
-                    } 
+                        if (function.GetType().IsGenericType)
+                        {
+                            (function as dynamic)(message.Data);
+                        }
+                        else
+                        {
+                            (function as dynamic)();
+                        }
+                    }
                 }
                 else
                 {

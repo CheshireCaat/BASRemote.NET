@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BASRemote.Exceptions;
@@ -10,8 +11,10 @@ using Newtonsoft.Json;
 
 namespace BASRemote.Services
 {
-    /// <inheritdoc cref="IEngineService" />
-    internal sealed class EngineService : BaseService, IEngineService
+    /// <summary>
+    ///     Provides methods for interacting with BAS engine.
+    /// </summary>
+    internal sealed class EngineService : BaseService
     {
         private const string Endpoint = "https://bablosoft.com";
 
@@ -53,19 +56,28 @@ namespace BASRemote.Services
         /// </summary>
         private string ZipDirectory { get; set; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// </summary>
         public event Action OnExtractStarted;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// </summary>
         public event Action OnExtractEnded;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// </summary>
         public event Action OnDownloadStarted;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// </summary>
         public event Action OnDownloadEnded;
 
-        /// <inheritdoc />
+        /// <summary>
+        ///     Asynchronously start the engine service with the specified port.
+        /// </summary>
+        /// <param name="port">
+        ///     Selected port number.
+        /// </param>
         public async Task StartEngineAsync(int port)
         {
             var version = Environment.Is64BitOperatingSystem ? 64 : 32;
@@ -92,7 +104,9 @@ namespace BASRemote.Services
             ClearRunDirectory();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task InitializeAsync()
         {
             var url = $"{Endpoint}/scripts/{Options.ScriptName}/properties";
@@ -142,7 +156,30 @@ namespace BASRemote.Services
         /// <returns></returns>
         private async Task ExtractExecutable(string zipPath)
         {
-            await Task.Run(() => ZipFile.ExtractToDirectory(zipPath, ExeDirectory));
+            using (var zip = new FileStream(zipPath, FileMode.Open))
+            {
+                using (var archive = new ZipArchive(zip, ZipArchiveMode.Read))
+                {
+                    foreach (var entry in archive.Entries)
+                    {
+                        var path = Path.Combine(ExeDirectory, entry.FullName);
+
+                        if (!entry.FullName.EndsWith("/") || !string.IsNullOrEmpty(entry.Name))
+                        {
+                            Directory.CreateDirectory(Path.GetDirectoryName(path) ?? throw new InvalidOperationException());
+
+                            using (Stream stream = entry.Open(), file = File.Open(path, FileMode.Create, FileAccess.Write))
+                            {
+                                await stream.CopyToAsync(file).ConfigureAwait(false);
+                            }
+                        }
+                        else
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+                    }
+                }
+            }
         }
 
         private void StartEngineProcess(int port)
@@ -167,15 +204,9 @@ namespace BASRemote.Services
         {
             foreach (var directory in Directory.GetDirectories(ScriptDirectory))
             {
-                var lockFile = Path.Combine(directory, ".lock");
-                if (!FileLock.IsLocked(lockFile))
+                if (!FileLock.IsLocked(Path.Combine(directory, ".lock")))
                 {
-                    Debug.WriteLine($"Lock file not exist in {directory}");
                     Directory.Delete(directory, true);
-                }
-                else
-                {
-                    Debug.WriteLine($"Lock file exist in {directory}");
                 }
             }
         }
@@ -190,15 +221,25 @@ namespace BASRemote.Services
 
         private sealed class Script
         {
-            [JsonProperty("engversion")] public string EngineVersion { get; private set; }
+            [JsonProperty("engversion")] 
+            public string EngineVersion { get; private set; }
 
-            public bool IsSupported => Version.Parse(EngineVersion) >= Version.Parse("22.4.2");
+            public bool IsSupported
+            {
+                get
+                {
+                    return Version.Parse(EngineVersion) >= Version.Parse("22.4.2");
+                }
+            }
 
-            [JsonProperty("success")] public bool IsExist { get; private set; }
+            [JsonProperty("success")] 
+            public bool IsExist { get; private set; }
 
-            [JsonProperty("free")] public bool IsFree { get; private set; }
+            [JsonProperty("free")] 
+            public bool IsFree { get; private set; }
 
-            [JsonProperty("hash")] public string Hash { get; private set; }
+            [JsonProperty("hash")] 
+            public string Hash { get; private set; }
         }
     }
 }
