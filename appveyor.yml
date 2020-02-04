@@ -1,17 +1,27 @@
 image: Visual Studio 2019
-
+configuration: Release
 version: '1.0.{build}'
-max_jobs: 1
+platform: Any CPU
 
-before_build:
-- nuget restore BASRemote.NET.sln
 build:
   project: BASRemote.NET.sln
   publish_nuget: true
   verbosity: minimal
+
+before_build:
+  - nuget restore BASRemote.NET.sln
+  
 after_build:
   - cmd: cd BASRemote.Tests
   - cmd: dotnet test
+
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: "{version}"
+  assembly_file_version: "{version}"
+  assembly_informational_version: "{version}"
+
 deploy:
   - provider: NuGet
     api_key:

@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>BASRemote</id>
-		<version>1.0.0</version>
+		<version>$version$</version>
 		<authors>CheshireCaat</authors>
 		<owners>CheshireCaat</owners>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -14,7 +14,7 @@
     	</description>
 		<copyright>Copyright 2020</copyright>
 		<language>en-US</language>
-		<tags>bas, bas remote, bas client, bas remote control, bas remote client</tags>
+		<tags>bas bas-remote bas-client bas-remote-control bas-remote-client</tags>
 		<dependencies>
             <group targetFramework=".NETFramework4.8">
             	<dependency id="WebSocketSharp" version="1.0.3-rc11" />
