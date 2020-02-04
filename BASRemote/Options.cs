@@ -3,10 +3,13 @@ using System.IO;
 
 namespace BASRemote
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public sealed class Options
     {
         /// <summary>
-        ///     Location of the working folder.
+        ///     Location of the selected working folder.
         /// </summary>
         public string WorkingDirectory { get; set; }
 

@@ -1,5 +1,8 @@
 # BASRemote.NET
 
+[![Build status](https://ci.appveyor.com/api/projects/status/se1coyoqblwm0imd?svg=true)](https://ci.appveyor.com/project/CheshireCaat/basremote-net)
+[![NuGet version](https://badge.fury.io/nu/BASRemote.svg)](https://badge.fury.io/nu/BASRemote)
+
 **BrowserAutomationStudioRemote (BASRemote)** - .NET library that allows you to remotely manage private scripts created using BAS.
 This uses a portable version of the engine to execute the script (FastExecuteScript). Interaction with the script is based on the same principles as the web interface (via the WebSocket connection).
 
