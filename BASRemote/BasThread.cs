@@ -23,6 +23,9 @@ namespace BASRemote
         }
 
         /// <inheritdoc />
+        public IBasRemoteClient Client { get; }
+
+        /// <inheritdoc />
         public bool IsRunning { get; private set; }
 
         /// <inheritdoc />
@@ -31,13 +34,8 @@ namespace BASRemote
         /// <inheritdoc />
         public async Task<dynamic> RunFunction(string functionName, Params functionParams)
         {
-            var tcs = new TaskCompletionSource<dynamic>();
-
-            RunFunctionSync(functionName, functionParams,
-                result => tcs.TrySetResult(result),
-                exception => tcs.TrySetException(exception));
-
-            return await tcs.Task.ConfigureAwait(false);
+            return await RunFunction<dynamic>(functionName, functionParams)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -53,10 +51,7 @@ namespace BASRemote
         }
 
         /// <inheritdoc />
-        public IBasThread RunFunctionSync(
-            string name,
-            Params functionParams,
-            Action<dynamic> onResult,
+        public IBasThread RunFunctionSync(string functionName, Params functionParams, Action<dynamic> onResult,
             Action<Exception> onError)
         {
             if (Id != 0 && IsRunning)
@@ -66,6 +61,7 @@ namespace BASRemote
 
             if (Id == 0)
             {
+                IsRunning = true;
                 Id = Rand.NextInt(1, 1000000);
                 Client.Send("start_thread", new Params {{"thread_id", Id}});
             }
@@ -74,7 +70,7 @@ namespace BASRemote
                 new Params
                 {
                     {"params", functionParams.ToJson()},
-                    {"function_name", name},
+                    {"function_name", functionName},
                     {"thread_id", Id}
                 }, result =>
                 {
@@ -105,8 +101,5 @@ namespace BASRemote
             IsRunning = false;
             Id = 0;
         }
-
-        /// <inheritdoc />
-        public IBasRemoteClient Client { get; }
     }
 }

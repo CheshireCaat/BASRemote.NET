@@ -23,13 +23,7 @@ namespace BASRemote.Example
             {
                 WriteStart();
 
-                var stopWatch = Stopwatch.StartNew();
                 await client.StartAsync();
-                stopWatch.Stop();
-
-                var ts = stopWatch.Elapsed;
-                var elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
-                Console.WriteLine("RunTime " + elapsedTime);
 
                 await TestExamples.MultipleAsyncFunctionRunWithThread(client);
                 await TestExamples.AsyncFunctionRunWithThread(client);

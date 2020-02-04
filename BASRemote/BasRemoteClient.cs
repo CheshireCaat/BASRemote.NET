@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using BASRemote.Exceptions;
 using BASRemote.Helpers;
 using BASRemote.Interfaces;
 using BASRemote.Objects;
@@ -127,12 +128,11 @@ namespace BASRemote
         /// <inheritdoc />
         public void SendAsync<T>(string type, Params data, Action<T> onResult)
         {
+            EnsureClientStarted();
+
             var message = new Message(data ?? Params.Empty, type, true);
-            Task.Run(() =>
-            {
-                _socket.SendAsync(message);
-                _requests[message.Id] = onResult;
-            });
+            _socket.SendAsync(message);
+            _requests[message.Id] = onResult;
         }
 
         /// <inheritdoc />
@@ -156,12 +156,11 @@ namespace BASRemote
         /// <inheritdoc />
         public void SendAsync<T>(string type, Action<T> onResult)
         {
+            EnsureClientStarted();
+
             var message = new Message(Params.Empty, type, true);
-            Task.Run(() =>
-            {
-                _socket.SendAsync(message);
-                _requests[message.Id] = onResult;
-            });
+            _socket.SendAsync(message);
+            _requests[message.Id] = onResult;
         }
 
         /// <inheritdoc />
@@ -179,6 +178,8 @@ namespace BASRemote
         /// <inheritdoc />
         public int Send(string type, Params data, bool async = false)
         {
+            EnsureClientStarted();
+
             var message = new Message(data, type, async);
             _socket.SendAsync(message);
             return message.Id;
@@ -188,21 +189,6 @@ namespace BASRemote
         public int Send(string type, bool async = false)
         {
             return Send(type, Params.Empty, async);
-        }
-
-        /// <inheritdoc />
-        public IBasThread CreateThread()
-        {
-            return new BasThread(this);
-        }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            _engine?.Dispose();
-            _socket?.Dispose();
-            _engine = null;
-            _socket = null;
         }
 
         /// <inheritdoc />
@@ -230,10 +216,7 @@ namespace BASRemote
         }
 
         /// <inheritdoc />
-        public IBasFunction RunFunctionSync(
-            string functionName,
-            Params functionParams,
-            Action<dynamic> onResult,
+        public IBasFunction RunFunctionSync(string functionName, Params functionParams, Action<dynamic> onResult,
             Action<Exception> onError)
         {
             EnsureClientStarted();
@@ -245,8 +228,23 @@ namespace BASRemote
         {
             if (_semaphore.CurrentCount == 0)
             {
-                throw new ApplicationException();
+                // TODO throw new ClientNotStartedException();
             }
+        }
+
+        /// <inheritdoc />
+        public IBasThread CreateThread()
+        {
+            return new BasThread(this);
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            _engine?.Dispose();
+            _socket?.Dispose();
+            _engine = null;
+            _socket = null;
         }
     }
 }

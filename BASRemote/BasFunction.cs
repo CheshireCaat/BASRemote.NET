@@ -23,15 +23,16 @@ namespace BASRemote
         }
 
         /// <inheritdoc />
+        public IBasRemoteClient Client { get; }
+
+        /// <inheritdoc />
+        public int Id { get; private set; }
+
+        /// <inheritdoc />
         public async Task<dynamic> RunFunction(string functionName, Params functionParams)
         {
-            var tcs = new TaskCompletionSource<dynamic>();
-
-            RunFunctionSync(functionName, functionParams,
-                result => tcs.TrySetResult(result),
-                exception => tcs.TrySetException(exception));
-
-            return await tcs.Task.ConfigureAwait(false);
+            return await RunFunction<dynamic>(functionName, functionParams)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -47,10 +48,7 @@ namespace BASRemote
         }
 
         /// <inheritdoc />
-        public IBasFunction RunFunctionSync(
-            string name,
-            Params functionParams,
-            Action<dynamic> onResult,
+        public IBasFunction RunFunctionSync(string functionName, Params functionParams, Action<dynamic> onResult,
             Action<Exception> onError)
         {
             Id = Rand.NextInt(1, 1000000);
@@ -60,7 +58,7 @@ namespace BASRemote
                 new Params
                 {
                     {"params", functionParams.ToJson()},
-                    {"function_name", name},
+                    {"function_name", functionName},
                     {"thread_id", Id}
                 }, result =>
                 {
@@ -81,17 +79,10 @@ namespace BASRemote
             return this;
         }
 
-
-        /// <inheritdoc />
-        public int Id { get; private set; }
-
         /// <inheritdoc />
         public void Stop()
         {
             Client.Send("stop_thread", new Params {{"thread_id", Id}});
         }
-
-        /// <inheritdoc />
-        public IBasRemoteClient Client { get; set; }
     }
 }

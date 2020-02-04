@@ -34,7 +34,7 @@ namespace BASRemote.Interfaces
         /// <summary>
         ///     Call the BAS function asynchronously and returns the promise.
         /// </summary>
-        /// <param name="name">
+        /// <param name="functionName">
         ///     BAS function name as string.
         /// </param>
         /// <param name="functionParams">
@@ -42,10 +42,7 @@ namespace BASRemote.Interfaces
         /// </param>
         /// <param name="onResult"></param>
         /// <param name="onError"></param>
-        TRunner RunFunctionSync(
-            string name,
-            Params functionParams,
-            Action<dynamic> onResult,
+        TRunner RunFunctionSync(string functionName, Params functionParams, Action<dynamic> onResult,
             Action<Exception> onError);
     }
 }
