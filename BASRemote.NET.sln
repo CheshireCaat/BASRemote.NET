@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote", "BASRemote\BASR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote.Tests", "BASRemote.Tests\BASRemote.Tests.csproj", "{B90DF73E-0FF8-4C94-8354-D9A97021285B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote.Integration.Tests", "BASRemote.Integration.Tests\BASRemote.Integration.Tests.csproj", "{AC0D3809-A0CF-4773-B3F7-819CDF909977}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote.Example", "BASRemote.Example\BASRemote.Example.csproj", "{B4423BE8-40DB-4271-8BB2-56C42913D39A}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{B90DF73E-0FF8-4C94-8354-D9A97021285B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B90DF73E-0FF8-4C94-8354-D9A97021285B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B90DF73E-0FF8-4C94-8354-D9A97021285B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC0D3809-A0CF-4773-B3F7-819CDF909977}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC0D3809-A0CF-4773-B3F7-819CDF909977}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC0D3809-A0CF-4773-B3F7-819CDF909977}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC0D3809-A0CF-4773-B3F7-819CDF909977}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B4423BE8-40DB-4271-8BB2-56C42913D39A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B4423BE8-40DB-4271-8BB2-56C42913D39A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4423BE8-40DB-4271-8BB2-56C42913D39A}.Release|Any CPU.ActiveCfg = Release|Any CPU
