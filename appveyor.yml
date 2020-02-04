@@ -9,7 +9,7 @@ deploy:
   symbol_server:
   artifact: /.*\.nupkg/
 build:
-  project: BASRemote.sln
+  project: BASRemote.NET.sln
   verbosity: minimal
   publish_nuget: true
 version: '1.0.{build}'
@@ -20,7 +20,7 @@ before_build:
 - appveyor-retry dotnet restore -v Minimal
 - nuget restore
 build_script:
-- dotnet msbuild BASRemote.sln /p:Configuration=%CONFIGURATION%
+- dotnet msbuild BASRemote.NET.sln /p:Configuration=%CONFIGURATION%
 after_build:
 - dotnet pack "BASRemote\BASRemote.csproj" -c %CONFIGURATION% --no-build -o artifacts
 test_script:
