@@ -1,6 +1,7 @@
 # BASRemote.NET
 
-**BrowserAutomationStudioRemote (BASRemote)** - .NET library which allows you to remotely manage private scripts created with BAS.
+**BrowserAutomationStudioRemote (BASRemote)** - .NET library that allows you to remotely manage private scripts created using BAS.
+This uses a portable version of the engine to execute the script (FastExecuteScript). Interaction with the script is based on the same principles as the web interface (via the WebSocket connection).
 
 # How to install
 
@@ -23,13 +24,9 @@ Checkout [wiki](https://github.com/CheshireCaat/BASRemote.NET/wiki)
 # Dependencies
 This library has dependencies on several excellent libraries:
 
-[C-Sharp-Promise](https://github.com/Real-Serious-Games/C-Sharp-Promise)
-
 [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
 
 [WebSocketSharp](https://github.com/sta/websocket-sharp)
-
-[Flurl.Http](https://github.com/tmenier/Flurl)
 
 # License
 This project is licensed under the MIT license.

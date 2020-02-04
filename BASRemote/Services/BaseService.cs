@@ -1,19 +1,12 @@
 ﻿namespace BASRemote.Services
 {
-    /// <summary>
-    /// 
-    /// </summary>
     internal abstract class BaseService
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="options"></param>
-        protected BaseService(BasRemoteOptions options)
+        protected BaseService(Options options)
         {
             Options = options;
         }
 
-        public BasRemoteOptions Options { get; }
+        protected Options Options { get; set; }
     }
 }

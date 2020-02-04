@@ -1,4 +1,4 @@
-﻿using System;
+﻿using BASRemote.Helpers;
 using Newtonsoft.Json;
 
 namespace BASRemote.Objects
@@ -6,11 +6,9 @@ namespace BASRemote.Objects
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public sealed class Message
     {
-        private static readonly Random Rand = new Random();
-
         public Message(dynamic data, string type, bool async)
         {
-            Id = Rand.Next(100000, 999999);
+            Id = Rand.NextInt(100000, 999999);
             Async = async;
             Type = type;
             Data = data;
@@ -31,15 +29,5 @@ namespace BASRemote.Objects
 
         [JsonProperty("id")] 
         public int Id { get; set; }
-
-        public static Message FromJson(string message)
-        {
-            return JsonConvert.DeserializeObject<Message>(message);
-        }
-
-        public string ToJson()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
     }
 }

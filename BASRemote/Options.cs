@@ -1,6 +1,9 @@
-﻿namespace BASRemote
+﻿using System;
+using System.IO;
+
+namespace BASRemote
 {
-    public sealed class BasRemoteOptions
+    public sealed class Options
     {
         /// <summary>
         /// </summary>
@@ -20,5 +23,13 @@
         ///     Login from a user account with access to the script.
         /// </summary>
         public string Login { get; set; }
+
+        /// <summary>
+        ///     Create an instance of <see cref="Options" /> class.
+        /// </summary>
+        public Options()
+        {
+            WorkingDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
+        }
     }
 }

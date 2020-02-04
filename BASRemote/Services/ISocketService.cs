@@ -24,8 +24,24 @@ namespace BASRemote.Services
         /// </summary>
         event Action OnOpen;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="port"></param>
         Task StartSocketAsync(int port);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="data"></param>
+        /// <param name="async"></param>
+        void SendAsync(string type, Params data, bool async = false);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
         void SendAsync(Message message);
     }
 }

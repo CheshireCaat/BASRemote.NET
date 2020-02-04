@@ -38,42 +38,35 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasRemoteClient.cs" />
-    <Compile Include="BasRemoteOptions.cs" />
+    <Compile Include="BasFunction.cs" />
+    <Compile Include="Extensions\ConvertExtensions.cs" />
+    <Compile Include="Helpers\FileLock.cs" />
+    <Compile Include="IBasFunction.cs" />
+    <Compile Include="Interfaces\IClientContainer.cs" />
+    <Compile Include="Interfaces\IFunctionRunner.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="Exceptions\AlreadyRunningException.cs" />
+    <Compile Include="Exceptions\FunctionException.cs" />
     <Compile Include="Exceptions\ScriptNotExistException.cs" />
     <Compile Include="Exceptions\ScriptNotSupportedException.cs" />
     <Compile Include="Exceptions\SocketNotConnectedException.cs" />
-    <Compile Include="Helpers\RandomHelper.cs" />
-    <Compile Include="Objects\FileDialogOptions.cs" />
     <Compile Include="Objects\Params.cs" />
-    <Compile Include="Common\BasBrowser.cs" />
-    <Compile Include="Objects\FunctionResult.cs" />
+    <Compile Include="Objects\Response.cs" />
     <Compile Include="Objects\Message.cs" />
-    <Compile Include="Common\BasTask.cs" />
-    <Compile Include="Common\BasThread.cs" />
-    <Compile Include="Common\IBasBrowser.cs" />
+    <Compile Include="BasThread.cs" />
     <Compile Include="IBasRemoteClient.cs" />
-    <Compile Include="Common\IBasTask.cs" />
-    <Compile Include="Common\IBasThread.cs" />
-    <Compile Include="Promises\IPromise.cs" />
-    <Compile Include="Promises\IPromise.Generic.cs" />
-    <Compile Include="Promises\Promise.cs" />
-    <Compile Include="Promises\Promise.Generic.cs" />
+    <Compile Include="IBasThread.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\EngineService.cs" />
     <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\EngineService.cs" />
+    <Compile Include="Services\IEngineService.cs" />
     <Compile Include="Services\ISocketService.cs" />
     <Compile Include="Services\SocketService.cs" />
+    <Compile Include="Helpers\Rand.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Flurl.Http">
-      <Version>3.0.0-pre3</Version>
-    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="RSG.Promise">
-      <Version>3.0.1</Version>
     </PackageReference>
     <PackageReference Include="WebSocketSharp">
       <Version>1.0.3-rc11</Version>

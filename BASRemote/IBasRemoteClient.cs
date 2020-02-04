@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using BASRemote.Common;
 using BASRemote.Objects;
-using BASRemote.Promises;
 
 namespace BASRemote
 {
@@ -13,92 +10,38 @@ namespace BASRemote
     public interface IBasRemoteClient : IDisposable
     {
         /// <summary>
-        ///     List of all running BAS browsers.
+        /// 
         /// </summary>
-        IReadOnlyDictionary<int, IBasBrowser> Browsers { get; }
-
-        /// <summary>
-        ///     List of all running BAS tasks.
-        /// </summary>
-        IReadOnlyDictionary<int, IBasTask> Tasks { get; }
+        event Action<string, dynamic> OnMessage;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="options"></param>
-        IPromise<string> OpenFileDialog(FileDialogOptions options);
+        event Action OnEngineDownloadStarted;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="options"></param>
-        IPromise<string> SaveFileDialog(FileDialogOptions options);
-
-        /// <summary>
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        IPromise SetGlobalVariable(string name, dynamic value);
-
-        /// <summary>
-        /// </summary>
-        /// <param name="name"></param>
-        IPromise<dynamic> GetGlobalVariable(string name);
-
-        /// <summary>
-        ///     Obtains resources report text.
-        /// </summary>
-        IPromise<string> GetResourcesReport();
-
-        /// <summary>
-        ///     Obtains script report text.
-        /// </summary>
-        IPromise<string> GetScriptReport();
-
-        /// <summary>
-        ///     Obtains result file content.
-        /// </summary>
-        /// <param name="number">
-        ///     Result number index.
-        /// </param>
-        IPromise<string> DownloadResult(int number);
-
-        /// <summary>
-        ///     Obtains log file content.
-        /// </summary>
-        IPromise<string> DownloadLog();
+        event Action OnEngineExtractStarted;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="browserId"></param>
-        void ShowBrowser(int browserId);
+        event Action OnEngineDownloadEnded;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="browserId"></param>
-        void HideBrowser(int browserId);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        IBasThread CreateThread();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        void InstallScheduler();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        void ShowScheduler();
+        event Action OnEngineExtractEnded;
 
         /// <summary>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <param name="type"></param>
+        /// <param name="data"></param>
+        Task<dynamic> SendAndWaitAsync(string type, Params data = null);
+
+        /// <summary>
+        /// </summary>
         /// <param name="type"></param>
         /// <param name="data"></param>
         Task<T> SendAndWaitAsync<T>(string type, Params data = null);
@@ -107,20 +50,59 @@ namespace BASRemote
         /// </summary>
         /// <param name="type"></param>
         /// <param name="data"></param>
-        Task SendAndWaitAsync(string type, Params data = null);
+        /// <param name="onResult"></param>
+        void SendAsync(string type, Params data, Action<dynamic> onResult);
 
         /// <summary>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="type"></param>
         /// <param name="data"></param>
-        IPromise<T> SendAsync<T>(string type, Params data = null);
+        /// <param name="onResult"></param>
+        void SendAsync<T>(string type, Params data, Action<T> onResult);
 
         /// <summary>
+        /// 
         /// </summary>
         /// <param name="type"></param>
         /// <param name="data"></param>
-        IPromise SendAsync(string type, Params data = null);
+        /// <param name="onResult"></param>
+        void SendAsync(string type, Params data, Action onResult);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="data"></param>
+        void SendAsync(string type, Params data);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="onResult"></param>
+        void SendAsync(string type, Action<dynamic> onResult);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="type"></param>
+        /// <param name="onResult"></param>
+        void SendAsync<T>(string type, Action<T> onResult);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="onResult"></param>
+        void SendAsync(string type, Action onResult);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        void SendAsync(string type);
 
         /// <summary>
         /// </summary>
@@ -136,15 +118,12 @@ namespace BASRemote
         int Send(string type, bool async = false);
 
         /// <summary>
+        /// 
         /// </summary>
-        Task StartAsync();
+        IBasThread CreateThread();
 
         /// <summary>
         /// </summary>
-        Task StopAsync();
-
-        void AddTask(int id, string type, IBasThread basThread, string functionName, Params functionParams);
-
-        void RemoveTask(int id);
+        Task StartAsync();
     }
 }

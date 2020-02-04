@@ -2,136 +2,173 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
 using System.Threading.Tasks;
 using BASRemote.Exceptions;
-using Flurl;
-using Flurl.Http;
+using BASRemote.Helpers;
 using Newtonsoft.Json;
 
 namespace BASRemote.Services
 {
-    /// <summary>
-    ///     Provides methods for interacting with BAS engine.
-    /// </summary>
-    internal sealed class EngineService : BaseService, IDisposable
+    /// <inheritdoc cref="IEngineService" />
+    internal sealed class EngineService : BaseService, IEngineService
     {
-        private readonly string _scriptDirectory;
-
-        private readonly string _engineDirectory;
-
-        private readonly string _runDirectory;
-
-        private string _exeDirectory;
+        private const string Endpoint = "https://bablosoft.com";
 
         /// <summary>
+        ///     Engine process object.
         /// </summary>
-        private FileStream _lock;
+        private Process _process;
 
-        private string _zipDirectory;
+        /// <summary>
+        ///     Engine script object.
+        /// </summary>
+        private Script _script;
+
+        /// <summary>
+        ///     File lock object.
+        /// </summary>
+        private FileLock _lock;
 
         /// <summary>
         ///     Create an instance of <see cref="EngineService" /> class.
         /// </summary>
-        /// <param name="options">
-        ///     Remote control options.ц
-        /// </param>
-        public EngineService(BasRemoteOptions options) : base(options)
+        public EngineService(Options options) : base(options)
         {
-            _engineDirectory = Path.Combine(Options.WorkingDirectory, "engine");
-            _runDirectory = Path.Combine(Options.WorkingDirectory, "run");
-
-            _scriptDirectory = Path.Combine(_runDirectory, Options.ScriptName);
+            ScriptDirectory = Path.Combine(Options.WorkingDirectory, "run", Options.ScriptName);
+            EngineDirectory = Path.Combine(Options.WorkingDirectory, "engine");
         }
 
-        public void Dispose()
-        {
-            _lock?.Dispose();
-            _lock = null;
-        }
+        private string ScriptDirectory { get; }
 
-        public async Task InitializeAsync()
-        {
-            //using (var client = new HttpClient())
-            //{
-            //    var result = await client.GetStringAsync($"https://bablosoft.com/scripts/{Options.ScriptName}/properties");
-            //    Script = JsonConvert.DeserializeObject<Script>(result);
-            //}
+        private string EngineDirectory { get; }
 
-            var script = await "https://bablosoft.com"
-                .AppendPathSegment("scripts")
-                .AppendPathSegment(Options.ScriptName)
-                .AppendPathSegment("properties")
-                .GetJsonAsync<Script>()
-                .ConfigureAwait(false);
+        /// <summary>
+        ///     The path to the directory in which the executable file of the engine is located.
+        /// </summary>
+        private string ExeDirectory { get; set; }
 
-            if (!script.IsSupported) throw new ScriptNotSupportedException();
-            if (!script.IsExist) throw new ScriptNotExistException();
+        /// <summary>
+        ///     The path to the directory in which the archive file of the engine is located.
+        /// </summary>
+        private string ZipDirectory { get; set; }
 
-            _zipDirectory = Path.Combine(_engineDirectory, script.EngineVersion);
-            _exeDirectory = Path.Combine(_scriptDirectory, script.Hash.Substring(0, 5));
-        }
+        /// <inheritdoc />
+        public event Action OnExtractStarted;
 
-        public async Task<string> DownloadExecutable(string zipName, string urlName)
-        {
-            return await "https://bablosoft.com"
-                .AppendPathSegment("distr")
-                .AppendPathSegment(urlName)
-                .AppendPathSegment(Path.GetDirectoryName(_zipDirectory))
-                .AppendPathSegment($"{zipName}.zip")
-                .DownloadFileAsync(_zipDirectory, $"{urlName}.zip")
-                .ConfigureAwait(false);
-        }
+        /// <inheritdoc />
+        public event Action OnExtractEnded;
 
-        public async Task ExtractExecutable(string zipPath)
-        {
-            //_extractSubject.OnNext(Unit.Default);
+        /// <inheritdoc />
+        public event Action OnDownloadStarted;
 
-            await Task.Run(() => ZipFile.ExtractToDirectory(zipPath, _exeDirectory));
+        /// <inheritdoc />
+        public event Action OnDownloadEnded;
 
-            //_extractSubject.OnCompleted();
-        }
-
+        /// <inheritdoc />
         public async Task StartEngineAsync(int port)
         {
             var version = Environment.Is64BitOperatingSystem ? 64 : 32;
             var zipName = $"FastExecuteScriptProtected.x{version}";
             var urlName = $"FastExecuteScriptProtected{version}";
 
-            var zipPath = Path.Combine(_zipDirectory, $"{urlName}.zip");
+            var zipPath = Path.Combine(ZipDirectory, $"{zipName}.zip");
 
-            if (!Directory.Exists(_zipDirectory))
-                await DownloadExecutable(zipName, urlName)
+            if (!Directory.Exists(ZipDirectory))
+            {
+                Directory.CreateDirectory(ZipDirectory);
+                await DownloadExecutable(zipPath, zipName, urlName)
                     .ConfigureAwait(false);
+            }
 
-            if (!Directory.Exists(_exeDirectory))
+            if (!Directory.Exists(ExeDirectory))
+            {
+                Directory.CreateDirectory(ExeDirectory);
                 await ExtractExecutable(zipPath)
                     .ConfigureAwait(false);
+            }
 
             StartEngineProcess(port);
+            ClearRunDirectory();
+        }
+
+        /// <inheritdoc />
+        public async Task InitializeAsync()
+        {
+            var url = $"{Endpoint}/scripts/{Options.ScriptName}/properties";
+
+            using (var client = new WebClient())
+            {
+                var response = await client.DownloadStringTaskAsync(url).ConfigureAwait(false);
+                _script = JsonConvert.DeserializeObject<Script>(response);
+
+                if (!_script.IsSupported)
+                {
+                    throw new ScriptNotSupportedException();
+                }
+
+                if (!_script.IsExist)
+                {
+                    throw new ScriptNotExistException();
+                }
+
+                ZipDirectory = Path.Combine(EngineDirectory, _script.EngineVersion);
+                ExeDirectory = Path.Combine(ScriptDirectory, _script.Hash.Substring(0, 5));
+            }
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="zipPath"></param>
+        /// <param name="zipName"></param>
+        /// <param name="urlName"></param>
+        private async Task DownloadExecutable(string zipPath, string zipName, string urlName)
+        {
+            var url = $"{Endpoint}/distr/{urlName}/{Path.GetFileName(ZipDirectory)}/{zipName}.zip";
+
+            using (var client = new WebClient())
+            {
+                OnDownloadStarted?.Invoke();
+                
+                await client.DownloadFileTaskAsync(url, zipPath).ConfigureAwait(false);
+
+                OnDownloadEnded?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="zipPath"></param>
+        /// <returns></returns>
+        private async Task ExtractExecutable(string zipPath)
+        {
+            await Task.Run(() => ZipFile.ExtractToDirectory(zipPath, ExeDirectory));
         }
 
         private void StartEngineProcess(int port)
         {
-            Process.Start
+            _process = Process.Start
             (
                 new ProcessStartInfo
                 {
                     Arguments = $"--remote-control --remote-control-port={port}",
-                    FileName = Path.Combine(_exeDirectory, "FastExecuteScript.exe"),
+                    FileName = Path.Combine(ExeDirectory, "FastExecuteScript.exe"),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 }
             );
+
+            _lock = new FileLock(Path.Combine(ExeDirectory, ".lock"));
         }
 
         private void ClearRunDirectory()
         {
-            foreach (var directory in Directory.GetDirectories(_scriptDirectory))
+            foreach (var directory in Directory.GetDirectories(ScriptDirectory))
             {
                 var lockFile = Path.Combine(directory, ".lock");
-                if (!File.Exists(lockFile))
+                if (!FileLock.IsLocked(lockFile))
                 {
                     Debug.WriteLine($"Lock file not exist in {directory}");
                     Directory.Delete(directory, true);
@@ -143,27 +180,25 @@ namespace BASRemote.Services
             }
         }
 
-        private class Script
+        public void Dispose()
         {
-            [JsonProperty("engversion")] 
-            public string EngineVersion { get; private set; }
+            _process?.Dispose();
+            _lock?.Dispose();
+            _process = null;
+            _lock = null;
+        }
 
-            public bool IsSupported
-            {
-                get
-                {
-                    return Version.Parse(EngineVersion) >= Version.Parse("22.4.2");
-                }
-            }
+        private sealed class Script
+        {
+            [JsonProperty("engversion")] public string EngineVersion { get; private set; }
 
-            [JsonProperty("success")]
-            public bool IsExist { get; private set; }
+            public bool IsSupported => Version.Parse(EngineVersion) >= Version.Parse("22.4.2");
 
-            [JsonProperty("free")] 
-            public bool IsFree { get; private set; }
+            [JsonProperty("success")] public bool IsExist { get; private set; }
 
-            [JsonProperty("hash")] 
-            public string Hash { get; private set; }
+            [JsonProperty("free")] public bool IsFree { get; private set; }
+
+            [JsonProperty("hash")] public string Hash { get; private set; }
         }
     }
 }
