@@ -1,31 +1,21 @@
-image: Visual Studio 2019
+image: Visual Studio 2017
 
-deploy:
-  provider: NuGet
-  server:
-  api_key:
-    secure: m49OJ7+Jdt9an3jPcTukHA==
-  skip_symbols: false
-  symbol_server:
-  artifact: /.*\.nupkg/
+version: '1.0.{build}'
+max_jobs: 1
+
+before_build:
+- nuget restore BASRemote.NET.sln
 build:
   project: BASRemote.NET.sln
-  verbosity: minimal
   publish_nuget: true
-version: '1.0.{build}'
-configuration:
-- Release
-platform: Any CPU
-before_build:
-- appveyor-retry dotnet restore -v Minimal
-- nuget restore
-build_script:
-- dotnet msbuild BASRemote.NET.sln /p:Configuration=%CONFIGURATION%
+  verbosity: minimal
 after_build:
-- dotnet pack "BASRemote\BASRemote.csproj" -c %CONFIGURATION% --no-build -o artifacts
-test_script:
-- dotnet test "BASRemote\BASRemote.Tests" -c %CONFIGURATION%
-artifacts:
-- path: artifacts\**\*.*
-cache:
-- '%USERPROFILE%\.nuget\packages'
+  - cmd: cd BASRemote.Tests
+  - cmd: dotnet test
+deploy:
+  - provider: NuGet
+    api_key:
+      secure: 0kI/E6vKNAtR5RcHodtKMAI/7zxURJxUznyo1Su+UiCkiaD5d/BfE8PxCxvjtu0p
+    on:
+      branch: master
+
