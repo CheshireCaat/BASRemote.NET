@@ -13,7 +13,7 @@ namespace BASRemote.Tests.Services
 
         public SocketServiceTests()
         {
-            _service = new SocketService(null);
+            _service = new SocketService(new Options());
         }
 
         /// <summary>

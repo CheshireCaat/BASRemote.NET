@@ -15,7 +15,7 @@ namespace BASRemote.Tests.Services
 
         public EngineServiceTests()
         {
-            _service = new EngineService(null);
+            _service = new EngineService(new Options());
         }
 
         /// <summary>
