@@ -22,32 +22,32 @@ namespace BASRemote.Example
 
         private static async Task FunctionsRun(IBasRemoteClient client)
         {
+            await Functions.ParallelAsyncFunctionRun(client);
+            await Functions.NotExistingAsyncFunctionRun(client);
+            await Functions.MultipleAsyncFunctionRun(client);
+            await Functions.AsyncFunctionRun(client);
+
             await Task.Run(() =>
             {
                 Functions.NotExistingFunctionRun(client);
                 Functions.MultipleFunctionRun(client);
                 Functions.FunctionRun(client);
             });
-
-            await Functions.ParallelAsyncFunctionRun(client);
-            await Functions.NotExistingAsyncFunctionRun(client);
-            await Functions.MultipleAsyncFunctionRun(client);
-            await Functions.AsyncFunctionRun(client);
         }
 
         private static async Task ThreadsRun(IBasRemoteClient client)
         {
+            await Threads.ParallelAsyncFunctionRunWithThread(client);
+            await Threads.NotExistingAsyncFunctionRunWithThread(client);
+            await Threads.MultipleAsyncFunctionRunWithThread(client);
+            await Threads.AsyncFunctionRunWithThread(client);
+
             await Task.Run(() =>
             {
                 Threads.NotExistingFunctionRunWithThread(client);
                 Threads.MultipleFunctionRunWithThread(client);
                 Threads.FunctionRunWithThread(client);
             });
-
-            await Threads.ParallelAsyncFunctionRunWithThread(client);
-            await Threads.NotExistingAsyncFunctionRunWithThread(client);
-            await Threads.MultipleAsyncFunctionRunWithThread(client);
-            await Threads.AsyncFunctionRunWithThread(client);
         }
     }
 }

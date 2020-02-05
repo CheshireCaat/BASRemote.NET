@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Threading;
 using System.Threading.Tasks;
 using BASRemote.Exceptions;
 using BASRemote.Helpers;
@@ -12,9 +11,20 @@ namespace BASRemote
     /// <inheritdoc cref="IBasRemoteClient" />
     public sealed class BasRemoteClient : IBasRemoteClient
     {
-        private readonly ConcurrentDictionary<int, object> _requests = new ConcurrentDictionary<int, object>();
+        /// <summary>
+        ///     Dictionary of generic requests handlers.
+        /// </summary>
+        private readonly ConcurrentDictionary<int, object> _genericRequests = new ConcurrentDictionary<int, object>();
 
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(0, 1);
+        /// <summary>
+        ///     Dictionary of default requests handlers.
+        /// </summary>
+        private readonly ConcurrentDictionary<int, object> _defaultRequests = new ConcurrentDictionary<int, object>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private readonly TaskCompletionSource<bool> _completion = new TaskCompletionSource<bool>();
 
         /// <summary>
         ///     Engine service provider object.
@@ -47,31 +57,26 @@ namespace BASRemote
             {
                 if (message.Type == "thread_start")
                 {
-                    if (_semaphore.CurrentCount == 0)
-                    {
-                        _semaphore.Release();
-                    }
+                    _completion.TrySetResult(true);
                 }
 
                 if (message.Type == "initialize")
                 {
-                    Send("accept_resources", new Params
+                    _socket.Send("accept_resources", new Params
                     {
                         {"-bas-empty-script-", true}
                     });
                 }
                 else if (message.Async && message.Id != 0)
                 {
-                    if (_requests.TryRemove(message.Id, out var function))
+                    if (_genericRequests.TryRemove(message.Id, out var genericFunction))
                     {
-                        if (function.GetType().IsGenericType)
-                        {
-                            (function as dynamic)(message.Data);
-                        }
-                        else
-                        {
-                            (function as dynamic)();
-                        }
+                        (genericFunction as dynamic)(message.Data);
+                    }
+
+                    if (_defaultRequests.TryRemove(message.Id, out var defaultFunction))
+                    {
+                        (defaultFunction as dynamic)();
                     }
                 }
                 else
@@ -108,8 +113,7 @@ namespace BASRemote
             await _socket.StartServiceAsync(port)
                 .ConfigureAwait(false);
 
-            await _semaphore.WaitAsync()
-                .ConfigureAwait(false);
+            await _completion.Task.ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -133,7 +137,7 @@ namespace BASRemote
             EnsureClientStarted();
 
             var message = new Message(data ?? Params.Empty, type, true);
-            _requests.TryAdd(message.Id, onResult);
+            _genericRequests.TryAdd(message.Id, onResult);
             _socket.Send(message);
         }
 
@@ -146,13 +150,17 @@ namespace BASRemote
         /// <inheritdoc />
         public void SendAsync(string type, Params data, Action onResult)
         {
-            SendAsync(type, data, result => onResult());
+            EnsureClientStarted();
+
+            var message = new Message(data ?? Params.Empty, type, true);
+            _defaultRequests.TryAdd(message.Id, onResult);
+            _socket.Send(message);
         }
 
         /// <inheritdoc />
         public void SendAsync(string type, Params data)
         {
-            SendAsync(type, data, result => { });
+            SendAsync(type, data, () => { });
         }
 
         /// <inheritdoc />
@@ -161,7 +169,7 @@ namespace BASRemote
             EnsureClientStarted();
 
             var message = new Message(Params.Empty, type, true);
-            _requests.TryAdd(message.Id, onResult);
+            _genericRequests.TryAdd(message.Id, onResult);
             _socket.Send(message);
         }
 
@@ -174,13 +182,17 @@ namespace BASRemote
         /// <inheritdoc />
         public void SendAsync(string type, Action onResult)
         {
-            SendAsync(type, result => onResult());
+            EnsureClientStarted();
+
+            var message = new Message(Params.Empty, type, true);
+            _defaultRequests.TryAdd(message.Id, onResult);
+            _socket.Send(message);
         }
 
         /// <inheritdoc />
         public void SendAsync(string type)
         {
-            SendAsync(type, result => { });
+            SendAsync(type, () => { });
         }
 
         /// <inheritdoc />
@@ -223,9 +235,9 @@ namespace BASRemote
 
         private void EnsureClientStarted()
         {
-            if (_semaphore.CurrentCount == 0)
+            if (!_completion.Task.IsCompleted)
             {
-                // TODO throw new ClientNotStartedException();
+                throw new ClientNotStartedException();
             }
         }
 

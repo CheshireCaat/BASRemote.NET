@@ -4,10 +4,14 @@ using BASRemote.Objects;
 
 namespace BASRemote.Interfaces
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TRunner"></typeparam>
     public interface IFunctionRunner<out TRunner>
     {
         /// <summary>
-        ///     Call the BAS function and returns the <see cref="TRunner" /> object.
+        ///     Call the BAS function and returns the runner object.
         /// </summary>
         /// <param name="functionName">
         ///     BAS function name as string.
