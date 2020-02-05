@@ -15,98 +15,168 @@ namespace BASRemote
         event Action<string, dynamic> OnMessage;
 
         /// <summary>
+        ///     Occurs when client starts downloading executable file.
         /// </summary>
         event Action OnEngineDownloadStarted;
 
         /// <summary>
+        ///     Occurs when client starts extracting executable file.
         /// </summary>
         event Action OnEngineExtractStarted;
 
         /// <summary>
+        ///     Occurs when client ends downloading executable file.
         /// </summary>
         event Action OnEngineDownloadEnded;
 
         /// <summary>
+        ///     Occurs when client ens extracting executable file.
         /// </summary>
         event Action OnEngineExtractEnded;
 
         /// <summary>
+        ///     Send the custom message asynchronously and get result.
         /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="type"></param>
-        /// <param name="data"></param>
+        /// <typeparam name="TResult">
+        ///     Selected result type.
+        /// </typeparam>
+        /// <param name="type">
+        ///     Selected message type.
+        /// </param>
+        /// <param name="data">
+        ///     Message arguments.
+        /// </param>
         Task<TResult> SendAndWaitAsync<TResult>(string type, Params data = null);
 
         /// <summary>
+        ///     Send the custom message asynchronously and get result.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="data"></param>
+        /// <param name="type">
+        ///     Selected message type.
+        /// </param>
+        /// <param name="data">
+        ///     Message arguments.
+        /// </param>
         Task<dynamic> SendAndWaitAsync(string type, Params data = null);
 
         /// <summary>
+        ///     Send the custom message asynchronously and perform action on result.
         /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="type"></param>
-        /// <param name="data"></param>
-        /// <param name="onResult"></param>
+        /// <typeparam name="TResult">
+        ///     Selected result type.
+        /// </typeparam>
+        /// <param name="type">
+        ///     Selected message type.
+        /// </param>
+        /// <param name="data">
+        ///     Message arguments.
+        /// </param>
+        /// <param name="onResult">
+        ///     Action that will be performed after receiving the result.
+        /// </param>
         void SendAsync<TResult>(string type, Params data, Action<TResult> onResult);
 
         /// <summary>
+        ///     Send the custom message asynchronously and perform action on result.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="data"></param>
-        /// <param name="onResult"></param>
+        /// <param name="type">
+        ///     Selected message type.
+        /// </param>
+        /// <param name="data">
+        ///     Message arguments.
+        /// </param>
+        /// <param name="onResult">
+        ///     Action that will be performed after receiving the result.
+        /// </param>
         void SendAsync(string type, Params data, Action<dynamic> onResult);
 
         /// <summary>
+        ///     Send the custom message asynchronously and perform action on result.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="data"></param>
-        /// <param name="onResult"></param>
+        /// <param name="type">
+        ///     Selected message type.
+        /// </param>
+        /// <param name="data">
+        ///     Message arguments.
+        /// </param>
+        /// <param name="onResult">
+        ///     Action that will be performed after receiving the result.
+        /// </param>
         void SendAsync(string type, Params data, Action onResult);
 
         /// <summary>
+        ///     Send the custom message asynchronously.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="data"></param>
+        /// <param name="type">
+        ///     Selected message type.
+        /// </param>
+        /// <param name="data">
+        ///     Message arguments.
+        /// </param>
         void SendAsync(string type, Params data);
 
         /// <summary>
+        ///     Send the custom message asynchronously and perform action on result.
         /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="type"></param>
-        /// <param name="onResult"></param>
+        /// <param name="type">
+        ///     Selected message type.
+        /// </param>
+        /// <param name="onResult">
+        ///     Action that will be performed after receiving the result.
+        /// </param>
         void SendAsync<TResult>(string type, Action<TResult> onResult);
 
         /// <summary>
+        ///     Send the custom message asynchronously and perform action on result.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="onResult"></param>
+        /// <param name="type">
+        ///     Selected message type.
+        /// </param>
+        /// <param name="onResult">
+        ///     Action that will be performed after receiving the result.
+        /// </param>
         void SendAsync(string type, Action<dynamic> onResult);
 
         /// <summary>
+        ///     Send the custom message asynchronously.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="onResult"></param>
+        /// <param name="type">
+        ///     Selected message type.
+        /// </param>
+        /// <param name="onResult">
+        ///     Action that will be performed after receiving the result.
+        /// </param>
         void SendAsync(string type, Action onResult);
 
         /// <summary>
+        ///     Send the custom message asynchronously.
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">
+        ///     Selected message type.
+        /// </param>
         void SendAsync(string type);
 
         /// <summary>
+        ///     Send the custom message and get message id as result.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="data"></param>
-        /// <param name="async"></param>
+        /// <param name="type">
+        ///     Selected message type.
+        /// </param>
+        /// <param name="data">
+        ///     Message arguments.
+        /// </param>
+        /// <param name="async">
+        ///     Is message async.
+        /// </param>
         int Send(string type, Params data = null, bool async = false);
 
         /// <summary>
+        ///     Create new BAS thread object.
         /// </summary>
         IBasThread CreateThread();
 
         /// <summary>
+        ///     Start the client and wait for it initialize.
         /// </summary>
         Task StartAsync();
     }

@@ -66,7 +66,7 @@ namespace BASRemote
             var tcs = new TaskCompletionSource<TResult>();
 
             RunFunctionSync(functionName, functionParams,
-                result => tcs.TrySetResult((TResult)result),
+                result => tcs.TrySetResult((TResult) result),
                 exception => tcs.TrySetException(exception));
 
             return await tcs.Task.ConfigureAwait(false);

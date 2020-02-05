@@ -51,20 +51,24 @@ namespace BASRemote.Services
         private string ZipDirectory { get; set; }
 
         /// <summary>
-        /// </summary>
-        public event Action OnExtractStarted;
-
-        /// <summary>
-        /// </summary>
-        public event Action OnExtractEnded;
-
-        /// <summary>
+        ///     Occurs when <see cref="EngineService" /> starts downloading executable file.
         /// </summary>
         public event Action OnDownloadStarted;
 
         /// <summary>
+        ///     Occurs when <see cref="EngineService" /> starts extracting executable file.
+        /// </summary>
+        public event Action OnExtractStarted;
+
+        /// <summary>
+        ///     Occurs when <see cref="EngineService" /> ends downloading executable file.
         /// </summary>
         public event Action OnDownloadEnded;
+
+        /// <summary>
+        ///     Occurs when <see cref="EngineService" /> ends extracting executable file.
+        /// </summary>
+        public event Action OnExtractEnded;
 
         /// <summary>
         ///     Asynchronously start the engine service with the specified port.
