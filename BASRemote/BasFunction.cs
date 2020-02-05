@@ -29,25 +29,6 @@ namespace BASRemote
         public int Id { get; private set; }
 
         /// <inheritdoc />
-        public async Task<dynamic> RunFunction(string functionName, Params functionParams)
-        {
-            return await RunFunction<dynamic>(functionName, functionParams)
-                .ConfigureAwait(false);
-        }
-
-        /// <inheritdoc />
-        public async Task<T> RunFunction<T>(string functionName, Params functionParams)
-        {
-            var tcs = new TaskCompletionSource<T>();
-
-            RunFunctionSync(functionName, functionParams,
-                result => tcs.TrySetResult((T) result),
-                exception => tcs.TrySetException(exception));
-
-            return await tcs.Task.ConfigureAwait(false);
-        }
-
-        /// <inheritdoc />
         public IBasFunction RunFunctionSync(string functionName, Params functionParams, Action<dynamic> onResult,
             Action<Exception> onError)
         {
@@ -77,6 +58,25 @@ namespace BASRemote
                 });
 
             return this;
+        }
+
+        /// <inheritdoc />
+        public async Task<TResult> RunFunction<TResult>(string functionName, Params functionParams)
+        {
+            var tcs = new TaskCompletionSource<TResult>();
+
+            RunFunctionSync(functionName, functionParams,
+                result => tcs.TrySetResult((TResult)result),
+                exception => tcs.TrySetException(exception));
+
+            return await tcs.Task.ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public async Task<dynamic> RunFunction(string functionName, Params functionParams)
+        {
+            return await RunFunction<dynamic>(functionName, functionParams)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc />

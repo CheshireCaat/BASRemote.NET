@@ -3,6 +3,7 @@
 namespace BASRemote
 {
     /// <summary>
+    ///     Basic interface for interacting with BAS functions.
     /// </summary>
     public interface IBasFunction : IFunctionRunner<IBasFunction>
     {

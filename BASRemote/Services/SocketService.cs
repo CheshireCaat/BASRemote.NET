@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,10 +10,12 @@ using WebSocketSharp;
 namespace BASRemote.Services
 {
     /// <summary>
-    ///     Provides methods for interacting with a BAS socket.
+    ///     Service that provides methods for interacting with a BAS socket.
     /// </summary>
     internal sealed class SocketService : BaseService
     {
+        private readonly object _sync = new object();
+
         private WebSocket _socket;
 
         private string _buffer;
@@ -28,8 +29,26 @@ namespace BASRemote.Services
         {
         }
 
+        private string Buffer
+        {
+            get
+            {
+                lock (_sync)
+                {
+                    return _buffer;
+                }
+            }
+            set
+            {
+                lock (_sync)
+                {
+                    _buffer = value;
+                }
+            }
+        }
+
         /// <summary>
-        ///     Occurs when <see cref="SocketService"/> receives a message.
+        ///     Occurs when <see cref="SocketService" /> receives a message.
         /// </summary>
         public event Action<Message> OnMessage;
 
@@ -49,7 +68,7 @@ namespace BASRemote.Services
         /// <param name="port">
         ///     Selected port number.
         /// </param>
-        public async Task StartSocketAsync(int port)
+        public override async Task StartServiceAsync(int port)
         {
             _socket = new WebSocket($"ws://127.0.0.1:{port}")
             {
@@ -58,26 +77,21 @@ namespace BASRemote.Services
 
             _socket.OnMessage += (sender, args) =>
             {
-                _buffer += args.Data;
+                Buffer += args.Data;
 
-                var split = _buffer.Split("---Message--End---");
+                var split = Buffer.Split("---Message--End---");
 
-                foreach (var message in split)
+                for (var i = 0; i < split.Length - 1; i++)
                 {
-                    if (!string.IsNullOrEmpty(message))
-                    {
-                        OnMessage?.Invoke(message.FromJson<Message>());
-                    }
+                    OnMessage?.Invoke(split[i].FromJson<Message>());
                 }
 
-                //Debug.WriteLine($"<-- {args.Data}");
-
-                _buffer = split.Last();
+                Buffer = split.Last();
             };
 
             _socket.OnOpen += (sender, args) =>
             {
-                SendAsync("remote_control_data", new Params
+                Send("remote_control_data", new Params
                 {
                     {"script", Options.ScriptName},
                     {"password", Options.Password},
@@ -108,7 +122,7 @@ namespace BASRemote.Services
 
                 OnClose?.Invoke();
             };
-            
+
             _socket.OnOpen += (sender, args) =>
             {
                 tcs.TrySetResult(true);
@@ -121,24 +135,21 @@ namespace BASRemote.Services
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="type"></param>
         /// <param name="data"></param>
         /// <param name="async"></param>
-        public void SendAsync(string type, Params data, bool async = false)
+        public void Send(string type, Params data, bool async = false)
         {
-            SendAsync(new Message(data, type, async));
+            Send(new Message(data, type, async));
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="message"></param>
-        public void SendAsync(Message message)
+        public void Send(Message message)
         {
-            //Debug.WriteLine($"--> {message.ToJson()}");
-            _socket.SendAsync($"{message.ToJson()}---Message--End---", b => {});
+            _socket.Send($"{message.ToJson()}---Message--End---");
         }
 
         public void Dispose()

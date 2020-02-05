@@ -1,40 +1,53 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using BASRemote.Example.Examples;
 
 namespace BASRemote.Example
 {
     internal static class Program
     {
-        private static void WriteStart()
-        {
-            Console.WriteLine("--------------BASRemote.Example--------------");
-        }
-
-        private static void WriteEnd()
-        {
-            Console.WriteLine("---------------------------------------------");
-        }
-
         private static async Task Main()
         {
             using (var client = new BasRemoteClient(new Options {ScriptName = "RemoteControlTest"}))
             {
-                WriteStart();
+                Console.WriteLine("--------------BASRemote.Example--------------");
 
                 await client.StartAsync();
+                await FunctionsRun(client);
+                await ThreadsRun(client);
 
-                await TestExamples.MultipleAsyncFunctionRunWithThread(client);
-                await TestExamples.AsyncFunctionRunWithThread(client);
-
-                TestExamples.MultipleFunctionRunWithThread(client);
-                TestExamples.FunctionRunWithThread(client);
-
-                WriteEnd();
+                Console.WriteLine("---------------------------------------------");
+                Console.ReadKey();
             }
+        }
 
-            Console.ReadKey();
+        private static async Task FunctionsRun(IBasRemoteClient client)
+        {
+            await Task.Run(() =>
+            {
+                Functions.NotExistingFunctionRun(client);
+                Functions.MultipleFunctionRun(client);
+                Functions.FunctionRun(client);
+            });
+
+            await Functions.ParallelAsyncFunctionRun(client);
+            await Functions.NotExistingAsyncFunctionRun(client);
+            await Functions.MultipleAsyncFunctionRun(client);
+            await Functions.AsyncFunctionRun(client);
+        }
+
+        private static async Task ThreadsRun(IBasRemoteClient client)
+        {
+            await Task.Run(() =>
+            {
+                Threads.NotExistingFunctionRunWithThread(client);
+                Threads.MultipleFunctionRunWithThread(client);
+                Threads.FunctionRunWithThread(client);
+            });
+
+            await Threads.ParallelAsyncFunctionRunWithThread(client);
+            await Threads.NotExistingAsyncFunctionRunWithThread(client);
+            await Threads.MultipleAsyncFunctionRunWithThread(client);
+            await Threads.AsyncFunctionRunWithThread(client);
         }
     }
 }

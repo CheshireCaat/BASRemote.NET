@@ -1,5 +1,6 @@
 # BASRemote.NET
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build status](https://ci.appveyor.com/api/projects/status/se1coyoqblwm0imd?svg=true)](https://ci.appveyor.com/project/CheshireCaat/basremote-net)
 [![NuGet version](https://badge.fury.io/nu/BASRemote.svg)](https://badge.fury.io/nu/BASRemote)
 

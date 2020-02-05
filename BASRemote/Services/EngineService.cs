@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BASRemote.Exceptions;
@@ -12,7 +11,7 @@ using Newtonsoft.Json;
 namespace BASRemote.Services
 {
     /// <summary>
-    ///     Provides methods for interacting with BAS engine.
+    ///     Service that provides methods for interacting with BAS engine.
     /// </summary>
     internal sealed class EngineService : BaseService
     {
@@ -22,11 +21,6 @@ namespace BASRemote.Services
         ///     Engine process object.
         /// </summary>
         private Process _process;
-
-        /// <summary>
-        ///     Engine script object.
-        /// </summary>
-        private Script _script;
 
         /// <summary>
         ///     File lock object.
@@ -78,7 +72,7 @@ namespace BASRemote.Services
         /// <param name="port">
         ///     Selected port number.
         /// </param>
-        public async Task StartEngineAsync(int port)
+        public override async Task StartServiceAsync(int port)
         {
             var version = Environment.Is64BitOperatingSystem ? 64 : 32;
             var zipName = $"FastExecuteScriptProtected.x{version}";
@@ -114,20 +108,20 @@ namespace BASRemote.Services
             using (var client = new WebClient())
             {
                 var response = await client.DownloadStringTaskAsync(url).ConfigureAwait(false);
-                _script = JsonConvert.DeserializeObject<Script>(response);
+                var script = JsonConvert.DeserializeObject<Script>(response);
 
-                if (!_script.IsSupported)
+                if (!script.IsSupported)
                 {
                     throw new ScriptNotSupportedException();
                 }
 
-                if (!_script.IsExist)
+                if (!script.IsExist)
                 {
                     throw new ScriptNotExistException();
                 }
 
-                ZipDirectory = Path.Combine(EngineDirectory, _script.EngineVersion);
-                ExeDirectory = Path.Combine(ScriptDirectory, _script.Hash.Substring(0, 5));
+                ZipDirectory = Path.Combine(EngineDirectory, script.EngineVersion);
+                ExeDirectory = Path.Combine(ScriptDirectory, script.Hash.Substring(0, 5));
             }
         }
 
@@ -153,9 +147,10 @@ namespace BASRemote.Services
         /// <summary>
         /// </summary>
         /// <param name="zipPath"></param>
-        /// <returns></returns>
         private async Task ExtractExecutable(string zipPath)
         {
+            OnExtractStarted?.Invoke();
+
             using (var zip = new FileStream(zipPath, FileMode.Open))
             {
                 using (var archive = new ZipArchive(zip, ZipArchiveMode.Read))
@@ -180,6 +175,8 @@ namespace BASRemote.Services
                     }
                 }
             }
+
+            OnExtractEnded?.Invoke();
         }
 
         private void StartEngineProcess(int port)

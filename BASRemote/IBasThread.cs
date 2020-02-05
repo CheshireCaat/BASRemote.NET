@@ -3,6 +3,7 @@
 namespace BASRemote
 {
     /// <summary>
+    ///     Basic interface for interacting with BAS threads.
     /// </summary>
     public interface IBasThread : IFunctionRunner<IBasThread>
     {

@@ -2,7 +2,7 @@
 
 namespace BASRemote.Objects
 {
-    public sealed class Params : Dictionary<object, object>
+    public sealed class Params : Dictionary<string, object>
     {
         public static Params Empty => new Params();
     }

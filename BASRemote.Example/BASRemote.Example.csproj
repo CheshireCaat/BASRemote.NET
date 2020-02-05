@@ -38,8 +38,11 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Examples\TestExamples.Async.Threads.cs" />
-    <Compile Include="Examples\TestExamples.Threads.cs" />
+    <Compile Include="Extensions\BasThreadEx.cs" />
+    <Compile Include="Functions\Functions.Async.cs" />
+    <Compile Include="Functions\Functions.cs" />
+    <Compile Include="Threads\Threads.Async.cs" />
+    <Compile Include="Threads\Threads.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

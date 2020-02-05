@@ -3,8 +3,7 @@ using Newtonsoft.Json;
 
 namespace BASRemote.Objects
 {
-    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public sealed class Message
+    internal sealed class Message
     {
         public Message(dynamic data, string type, bool async)
         {

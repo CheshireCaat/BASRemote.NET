@@ -3,9 +3,6 @@ using System.IO;
 
 namespace BASRemote
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public sealed class Options
     {
         /// <summary>

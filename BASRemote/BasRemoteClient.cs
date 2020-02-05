@@ -4,21 +4,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using BASRemote.Exceptions;
 using BASRemote.Helpers;
-using BASRemote.Interfaces;
 using BASRemote.Objects;
 using BASRemote.Services;
 
 namespace BASRemote
 {
     /// <inheritdoc cref="IBasRemoteClient" />
-    public sealed class BasRemoteClient : IBasRemoteClient, IFunctionRunner<IBasFunction>
+    public sealed class BasRemoteClient : IBasRemoteClient
     {
         private readonly ConcurrentDictionary<int, object> _requests = new ConcurrentDictionary<int, object>();
 
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(0, 1);
 
+        /// <summary>
+        ///     Engine service provider object.
+        /// </summary>
         private EngineService _engine;
 
+        /// <summary>
+        ///     Socket service provider object.
+        /// </summary>
         private SocketService _socket;
 
         /// <summary>
@@ -43,7 +48,9 @@ namespace BASRemote
                 if (message.Type == "thread_start")
                 {
                     if (_semaphore.CurrentCount == 0)
+                    {
                         _semaphore.Release();
+                    }
                 }
 
                 if (message.Type == "initialize")
@@ -96,9 +103,9 @@ namespace BASRemote
 
             var port = Rand.NextInt(10000, 20000);
 
-            await _engine.StartEngineAsync(port)
+            await _engine.StartServiceAsync(port)
                 .ConfigureAwait(false);
-            await _socket.StartSocketAsync(port)
+            await _socket.StartServiceAsync(port)
                 .ConfigureAwait(false);
 
             await _semaphore.WaitAsync()
@@ -106,33 +113,34 @@ namespace BASRemote
         }
 
         /// <inheritdoc />
-        public async Task<dynamic> SendAndWaitAsync(string type, Params data = null)
+        public async Task<TResult> SendAndWaitAsync<TResult>(string type, Params data = null)
         {
-            return await SendAndWaitAsync<dynamic>(type, data);
+            var tcs = new TaskCompletionSource<TResult>();
+            SendAsync<TResult>(type, data, result => tcs.TrySetResult(result));
+            return await tcs.Task.ConfigureAwait(false);
         }
 
         /// <inheritdoc />
-        public async Task<T> SendAndWaitAsync<T>(string type, Params data = null)
+        public async Task<dynamic> SendAndWaitAsync(string type, Params data = null)
         {
-            var tcs = new TaskCompletionSource<T>();
-            SendAsync<T>(type, data, result => tcs.TrySetResult(result));
-            return await tcs.Task.ConfigureAwait(false);
+            return await SendAndWaitAsync<dynamic>(type, data)
+                .ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public void SendAsync<TResult>(string type, Params data, Action<TResult> onResult)
+        {
+            EnsureClientStarted();
+
+            var message = new Message(data ?? Params.Empty, type, true);
+            _requests.TryAdd(message.Id, onResult);
+            _socket.Send(message);
         }
 
         /// <inheritdoc />
         public void SendAsync(string type, Params data, Action<dynamic> onResult)
         {
             SendAsync<dynamic>(type, data, onResult);
-        }
-
-        /// <inheritdoc />
-        public void SendAsync<T>(string type, Params data, Action<T> onResult)
-        {
-            EnsureClientStarted();
-
-            var message = new Message(data ?? Params.Empty, type, true);
-            _socket.SendAsync(message);
-            _requests[message.Id] = onResult;
         }
 
         /// <inheritdoc />
@@ -148,19 +156,19 @@ namespace BASRemote
         }
 
         /// <inheritdoc />
-        public void SendAsync(string type, Action<dynamic> onResult)
-        {
-            SendAsync<dynamic>(type, onResult);
-        }
-
-        /// <inheritdoc />
-        public void SendAsync<T>(string type, Action<T> onResult)
+        public void SendAsync<TResult>(string type, Action<TResult> onResult)
         {
             EnsureClientStarted();
 
             var message = new Message(Params.Empty, type, true);
-            _socket.SendAsync(message);
-            _requests[message.Id] = onResult;
+            _requests.TryAdd(message.Id, onResult);
+            _socket.Send(message);
+        }
+
+        /// <inheritdoc />
+        public void SendAsync(string type, Action<dynamic> onResult)
+        {
+            SendAsync<dynamic>(type, onResult);
         }
 
         /// <inheritdoc />
@@ -176,43 +184,13 @@ namespace BASRemote
         }
 
         /// <inheritdoc />
-        public int Send(string type, Params data, bool async = false)
+        public int Send(string type, Params data = null, bool async = false)
         {
             EnsureClientStarted();
 
-            var message = new Message(data, type, async);
-            _socket.SendAsync(message);
+            var message = new Message(data ?? Params.Empty, type, async);
+            _socket.Send(message);
             return message.Id;
-        }
-
-        /// <inheritdoc />
-        public int Send(string type, bool async = false)
-        {
-            return Send(type, Params.Empty, async);
-        }
-
-        /// <inheritdoc />
-        public async Task<dynamic> RunFunction(string functionName, Params functionParams)
-        {
-            var tcs = new TaskCompletionSource<dynamic>();
-
-            RunFunctionSync(functionName, functionParams,
-                result => tcs.TrySetResult(result),
-                exception => tcs.TrySetException(exception));
-
-            return await tcs.Task.ConfigureAwait(false);
-        }
-
-        /// <inheritdoc />
-        public async Task<T> RunFunction<T>(string functionName, Params functionParams)
-        {
-            var tcs = new TaskCompletionSource<T>();
-
-            RunFunctionSync(functionName, functionParams,
-                result => tcs.TrySetResult((T) result),
-                exception => tcs.TrySetException(exception));
-
-            return await tcs.Task.ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -222,6 +200,25 @@ namespace BASRemote
             EnsureClientStarted();
 
             return new BasFunction(this).RunFunctionSync(functionName, functionParams, onResult, onError);
+        }
+
+        /// <inheritdoc />
+        public async Task<TResult> RunFunction<TResult>(string functionName, Params functionParams)
+        {
+            var tcs = new TaskCompletionSource<TResult>();
+
+            RunFunctionSync(functionName, functionParams,
+                result => tcs.TrySetResult((TResult) result),
+                exception => tcs.TrySetException(exception));
+
+            return await tcs.Task.ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public async Task<dynamic> RunFunction(string functionName, Params functionParams)
+        {
+            return await RunFunction<dynamic>(functionName, functionParams)
+                .ConfigureAwait(false);
         }
 
         private void EnsureClientStarted()
