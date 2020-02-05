@@ -11,6 +11,7 @@ namespace BASRemote
     public interface IBasRemoteClient : IDisposable, IFunctionRunner<IBasFunction>
     {
         /// <summary>
+        ///     Occurs when client receives any event message from script.
         /// </summary>
         event Action<string, dynamic> OnMessage;
 

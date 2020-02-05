@@ -3,6 +3,9 @@ using System.IO;
 
 namespace BASRemote
 {
+    /// <summary>
+    ///     Class that contains client settings.
+    /// </summary>
     public sealed class Options
     {
         /// <summary>

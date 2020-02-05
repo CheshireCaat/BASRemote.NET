@@ -5,9 +5,11 @@ using BASRemote.Objects;
 namespace BASRemote.Interfaces
 {
     /// <summary>
-    /// 
+    ///     Basic interface for running BAS functions.
     /// </summary>
-    /// <typeparam name="TRunner"></typeparam>
+    /// <typeparam name="TRunner">
+    ///     Type that implements this interface.
+    /// </typeparam>
     public interface IFunctionRunner<out TRunner>
     {
         /// <summary>
