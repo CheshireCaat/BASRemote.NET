@@ -53,7 +53,7 @@ namespace BASRemote
             _engine.OnExtractStarted += () => OnEngineExtractStarted?.Invoke();
             _engine.OnExtractEnded += () => OnEngineExtractEnded?.Invoke();
 
-            _socket.OnMessage += message =>
+            _socket.OnMessageReceived += message =>
             {
                 if (message.Type == "thread_start")
                 {
@@ -81,13 +81,18 @@ namespace BASRemote
                 }
                 else
                 {
-                    OnMessage?.Invoke(message.Type, message.Data);
+                    OnMessageReceived?.Invoke(message.Type, message.Data);
                 }
             };
+
+            _socket.OnMessageSent += message => OnMessageSent?.Invoke(message);
         }
 
         /// <inheritdoc />
-        public event Action<string, dynamic> OnMessage;
+        public event Action<string, dynamic> OnMessageReceived;
+
+        /// <inheritdoc />
+        public event Action<Message> OnMessageSent;
 
         /// <inheritdoc />
         public event Action OnEngineDownloadStarted;

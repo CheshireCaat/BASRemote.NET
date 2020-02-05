@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 
 namespace BASRemote.Objects
 {
-    internal sealed class Message
+    public sealed class Message
     {
-        public Message(dynamic data, string type, bool async)
+        internal Message(dynamic data, string type, bool async)
         {
             Id = Rand.NextInt(100000, 999999);
             Async = async;
@@ -13,7 +13,7 @@ namespace BASRemote.Objects
             Data = data;
         }
 
-        public Message()
+        internal Message()
         {
         }
 

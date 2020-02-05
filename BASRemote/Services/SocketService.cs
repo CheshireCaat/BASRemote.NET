@@ -50,7 +50,12 @@ namespace BASRemote.Services
         /// <summary>
         ///     Occurs when <see cref="SocketService" /> receives a message.
         /// </summary>
-        public event Action<Message> OnMessage;
+        public event Action<Message> OnMessageReceived;
+
+        /// <summary>
+        ///     Occurs when <see cref="SocketService" /> sends a message.
+        /// </summary>
+        public event Action<Message> OnMessageSent; 
 
         /// <summary>
         ///     Occurs when <see cref="SocketService" /> connection has been closed.
@@ -83,7 +88,7 @@ namespace BASRemote.Services
 
                 for (var i = 0; i < split.Length - 1; i++)
                 {
-                    OnMessage?.Invoke(split[i].FromJson<Message>());
+                    OnMessageReceived?.Invoke(split[i].FromJson<Message>());
                 }
 
                 Buffer = split.Last();
@@ -150,6 +155,7 @@ namespace BASRemote.Services
         public void Send(Message message)
         {
             _socket.Send($"{message.ToJson()}---Message--End---");
+            OnMessageSent?.Invoke(message);
         }
 
         public void Dispose()
