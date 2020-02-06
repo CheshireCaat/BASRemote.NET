@@ -184,6 +184,6 @@ namespace BASRemote
         /// <summary>
         ///     Start the client and wait for it initialize.
         /// </summary>
-        Task StartAsync();
+        Task Start();
     }
 }

@@ -77,7 +77,7 @@ namespace BASRemoteExample
             using (var client = new BasRemoteClient(options))
             {
                 // Start the client
-                await client.StartAsync();
+                await client.Start();
 
                 // Run Add function and wait for result
                 var result = await client.RunFunction<int>("Add", new Params

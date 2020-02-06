@@ -107,7 +107,7 @@ namespace BASRemote
         public event Action OnEngineExtractEnded;
 
         /// <inheritdoc />
-        public async Task StartAsync()
+        public async Task Start()
         {
             await _engine.InitializeAsync().ConfigureAwait(false);
 

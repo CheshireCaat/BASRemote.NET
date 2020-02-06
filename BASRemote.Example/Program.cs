@@ -11,7 +11,7 @@ namespace BASRemote.Example
             {
                 Console.WriteLine("--------------BASRemote.Example--------------");
 
-                await client.StartAsync();
+                await client.Start();
                 await FunctionsRun(client);
                 await ThreadsRun(client);
 
