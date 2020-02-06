@@ -120,14 +120,14 @@ namespace BASRemote.Services
                 var response = await client.DownloadStringTaskAsync(url).ConfigureAwait(false);
                 var script = JsonConvert.DeserializeObject<Script>(response);
 
-                if (!script.IsSupported)
-                {
-                    throw new ScriptNotSupportedException();
-                }
-
                 if (!script.IsExist)
                 {
                     throw new ScriptNotExistException();
+                }
+
+                if (!script.IsSupported)
+                {
+                    throw new ScriptNotSupportedException();
                 }
 
                 ZipDirectory = Path.Combine(EngineDirectory, script.EngineVersion);
@@ -236,7 +236,12 @@ namespace BASRemote.Services
             {
                 get
                 {
-                    return Version.Parse(EngineVersion) >= Version.Parse("22.4.2");
+                    if (EngineVersion != null)
+                    {
+                        return Version.Parse(EngineVersion) >= Version.Parse("22.4.2");
+                    }
+
+                    return false;
                 }
             }
 
