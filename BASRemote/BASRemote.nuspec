@@ -15,6 +15,11 @@
 		<copyright>Copyright 2020</copyright>
 		<language>en-US</language>
 		<tags>bas bas-remote bas-client bas-remote-control bas-remote-client</tags>
+		<dependencies>	
+            <group targetFramework=".NETFramework4.5">
+            	<dependency id="Newtonsoft.Json" version="12.0.3" />   	
+            </group>	
+        </dependencies>
 	</metadata>
 	<files>
     	<file src="..\tools\basremote-icon.png" target="tools\" />
