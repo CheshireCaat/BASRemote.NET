@@ -197,6 +197,7 @@ namespace BASRemote.Services
                 {
                     Arguments = $"--remote-control --remote-control-port={port}",
                     FileName = Path.Combine(ExeDirectory, "FastExecuteScript.exe"),
+                    WorkingDirectory = ExeDirectory,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
