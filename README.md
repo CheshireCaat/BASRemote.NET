@@ -60,6 +60,7 @@ The code shown in the example below performs the **Add** function, which adds tw
 
 ```csharp
 using System.Threading.Tasks;
+using BASRemote;
 using BASRemote.Objects;
 
 namespace BASRemoteExample
