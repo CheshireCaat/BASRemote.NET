@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using BASRemote.Interfaces;
 using BASRemote.Objects;
@@ -185,6 +184,6 @@ namespace BASRemote
         /// <summary>
         ///     Start the client and wait for it initialize.
         /// </summary>
-        Task Start(CancellationToken token = default);
+        Task Start();
     }
 }

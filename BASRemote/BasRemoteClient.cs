@@ -111,20 +111,28 @@ namespace BASRemote
         public event Action OnEngineExtractEnded;
 
         /// <inheritdoc />
-        public async Task Start(CancellationToken token = default)
+        public async Task Start()
         {
-            using (token.Register(() => _completion.TrySetCanceled()))
+            await _engine.InitializeAsync().ConfigureAwait(false);
+
+            var port = Rand.NextInt(10000, 20000);
+
+            await _engine.StartServiceAsync(port)
+                .ConfigureAwait(false);
+            await _socket.StartServiceAsync(port)
+                .ConfigureAwait(false);
+
+            await StartClient().ConfigureAwait(false);
+        }
+
+        private async Task StartClient()
+        {
+            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60)))
             {
-                await _engine.InitializeAsync().ConfigureAwait(false);
-
-                var port = Rand.NextInt(10000, 20000);
-
-                await _engine.StartServiceAsync(port)
-                    .ConfigureAwait(false);
-                await _socket.StartServiceAsync(port)
-                    .ConfigureAwait(false);
-
-                await _completion.Task.ConfigureAwait(false);
+                using (cts.Token.Register(() => _completion.TrySetCanceled()))
+                {
+                    await _completion.Task.ConfigureAwait(false);
+                }
             }
         }
 
