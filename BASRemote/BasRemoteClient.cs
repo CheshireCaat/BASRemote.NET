@@ -55,6 +55,8 @@ namespace BASRemote
 
             _socket.OnMessageReceived += message =>
             {
+                OnMessageReceived?.Invoke(message.Type, message.Data);
+
                 if (message.Type == "thread_start")
                 {
                     _completion.TrySetResult(true);
@@ -78,10 +80,6 @@ namespace BASRemote
                     {
                         (defaultFunction as dynamic)();
                     }
-                }
-                else
-                {
-                    OnMessageReceived?.Invoke(message.Type, message.Data);
                 }
             };
 
