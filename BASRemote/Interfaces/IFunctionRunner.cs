@@ -31,7 +31,7 @@ namespace BASRemote.Interfaces
             Action<Exception> onError);
 
         /// <summary>
-        ///     Call the BAS function asynchronously and returns the result.
+        ///     Call the BAS function asynchronously and get the result.
         /// </summary>
         /// <param name="functionName">
         ///     BAS function name as string.
@@ -45,7 +45,7 @@ namespace BASRemote.Interfaces
         Task<TResult> RunFunction<TResult>(string functionName, Params functionParams);
 
         /// <summary>
-        ///     Call the BAS function asynchronously and returns the result.
+        ///     Call the BAS function asynchronously and get the result.
         /// </summary>
         /// <param name="functionName">
         ///     BAS function name as string.

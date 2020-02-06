@@ -14,37 +14,17 @@ namespace BASRemote.Services
     /// </summary>
     internal sealed class SocketService : BaseService
     {
-        private readonly object _sync = new object();
-
         private WebSocket _socket;
 
         private string _buffer;
 
-        private int _tries;
+        private int _attempts;
 
         /// <summary>
         ///     Create an instance of <see cref="SocketService" /> class.
         /// </summary>
         public SocketService(Options options) : base(options)
         {
-        }
-
-        private string Buffer
-        {
-            get
-            {
-                lock (_sync)
-                {
-                    return _buffer;
-                }
-            }
-            set
-            {
-                lock (_sync)
-                {
-                    _buffer = value;
-                }
-            }
         }
 
         /// <summary>
@@ -82,16 +62,16 @@ namespace BASRemote.Services
 
             _socket.OnMessage += (sender, args) =>
             {
-                Buffer += args.Data;
+                _buffer += args.Data;
 
-                var split = Buffer.Split("---Message--End---");
+                var split = _buffer.Split("---Message--End---");
 
                 for (var i = 0; i < split.Length - 1; i++)
                 {
                     OnMessageReceived?.Invoke(split[i].FromJson<Message>());
                 }
 
-                Buffer = split.Last();
+                _buffer = split.Last();
             };
 
             _socket.OnOpen += (sender, args) =>
@@ -115,14 +95,14 @@ namespace BASRemote.Services
             {
                 if (!args.WasClean)
                 {
-                    if (_tries == 60)
+                    if (_attempts == 60)
                     {
                         tcs.TrySetException(new SocketNotConnectedException());
                     }
 
                     Thread.Sleep(TimeSpan.FromSeconds(1));
                     _socket.Connect();
-                    _tries++;
+                    _attempts++;
                 }
 
                 OnClose?.Invoke();

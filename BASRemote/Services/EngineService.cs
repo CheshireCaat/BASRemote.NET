@@ -36,8 +36,14 @@ namespace BASRemote.Services
             EngineDirectory = Path.Combine(Options.WorkingDirectory, "engine");
         }
 
+        /// <summary>
+        ///     The path to the directory in which all versions of the script are located.
+        /// </summary>
         private string ScriptDirectory { get; }
 
+        /// <summary>
+        ///     The path to the directory in which all versions of the engine are located.
+        /// </summary>
         private string EngineDirectory { get; }
 
         /// <summary>

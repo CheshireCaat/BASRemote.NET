@@ -48,9 +48,9 @@ namespace BASRemote
             _socket = new SocketService(options);
 
             _engine.OnDownloadStarted += () => OnEngineDownloadStarted?.Invoke();
-            _engine.OnDownloadEnded += () => OnEngineDownloadEnded?.Invoke();
-
             _engine.OnExtractStarted += () => OnEngineExtractStarted?.Invoke();
+
+            _engine.OnDownloadEnded += () => OnEngineDownloadEnded?.Invoke();
             _engine.OnExtractEnded += () => OnEngineExtractEnded?.Invoke();
 
             _socket.OnMessageReceived += message =>
@@ -118,7 +118,36 @@ namespace BASRemote
             await _socket.StartServiceAsync(port)
                 .ConfigureAwait(false);
 
-            await _completion.Task.ConfigureAwait(false);
+            await _completion.Task
+                .ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public IBasFunction RunFunctionSync(string functionName, Params functionParams, Action<dynamic> onResult,
+            Action<Exception> onError)
+        {
+            EnsureClientStarted();
+
+            return new BasFunction(this).RunFunctionSync(functionName, functionParams, onResult, onError);
+        }
+
+        /// <inheritdoc />
+        public async Task<TResult> RunFunction<TResult>(string functionName, Params functionParams)
+        {
+            var tcs = new TaskCompletionSource<TResult>();
+
+            RunFunctionSync(functionName, functionParams,
+                result => tcs.TrySetResult((TResult)result),
+                exception => tcs.TrySetException(exception));
+
+            return await tcs.Task.ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public async Task<dynamic> RunFunction(string functionName, Params functionParams)
+        {
+            return await RunFunction<dynamic>(functionName, functionParams)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -208,34 +237,6 @@ namespace BASRemote
             var message = new Message(data ?? Params.Empty, type, async);
             _socket.Send(message);
             return message.Id;
-        }
-
-        /// <inheritdoc />
-        public IBasFunction RunFunctionSync(string functionName, Params functionParams, Action<dynamic> onResult,
-            Action<Exception> onError)
-        {
-            EnsureClientStarted();
-
-            return new BasFunction(this).RunFunctionSync(functionName, functionParams, onResult, onError);
-        }
-
-        /// <inheritdoc />
-        public async Task<TResult> RunFunction<TResult>(string functionName, Params functionParams)
-        {
-            var tcs = new TaskCompletionSource<TResult>();
-
-            RunFunctionSync(functionName, functionParams,
-                result => tcs.TrySetResult((TResult) result),
-                exception => tcs.TrySetException(exception));
-
-            return await tcs.Task.ConfigureAwait(false);
-        }
-
-        /// <inheritdoc />
-        public async Task<dynamic> RunFunction(string functionName, Params functionParams)
-        {
-            return await RunFunction<dynamic>(functionName, functionParams)
-                .ConfigureAwait(false);
         }
 
         private void EnsureClientStarted()
