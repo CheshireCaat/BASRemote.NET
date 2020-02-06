@@ -54,6 +54,47 @@ Here is an example function **GoogleSearch** which collects links from a Google 
 
 This library can use the functions created in your project and execute them in separate BAS threads. You can control the lifetime of threads and call several functions in them, or use simplified calls using client methods.
 
+# Quick example
+
+The code shown in the example below performs the **Add** function, which adds two numbers and displays the result in the console:
+
+```csharp
+using System.Threading.Tasks;
+using BASRemote.Objects;
+
+namespace BASRemoteExample
+{
+    internal static class Program
+    {
+        private static async Task Main()
+        {
+            // Specify script options
+            var options = new Options
+            {
+                ScriptName = "RemoteControlTest"
+            };
+            
+            using (var client = new BasRemoteClient(options))
+            {
+                // Start the client
+                await client.StartAsync();
+
+                // Run Add function and wait for result
+                var result = await client.RunFunction<int>("Add", new Params
+                {
+                    ["X"] = 15,
+                    ["Y"] = 25
+                });
+                
+                // Print result
+                System.Console.WriteLine($"15 + 25 = {result}");
+                System.Console.ReadKey();
+            }
+        }
+    }
+}
+```
+
 # How to install
 
 Install via NuGet:
