@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
 using BASRemote.Exceptions;
 using BASRemote.Helpers;
@@ -57,6 +58,11 @@ namespace BASRemote
             {
                 OnMessageReceived?.Invoke(message.Type, message.Data);
 
+                if (message.Type == "message")
+                {
+                    _completion.TrySetException(new AuthenticationException((string) message.Data["text"]));
+                }
+
                 if (message.Type == "thread_start")
                 {
                     _completion.TrySetResult(true);
@@ -105,19 +111,21 @@ namespace BASRemote
         public event Action OnEngineExtractEnded;
 
         /// <inheritdoc />
-        public async Task Start()
+        public async Task Start(CancellationToken token = default)
         {
-            await _engine.InitializeAsync().ConfigureAwait(false);
+            using (token.Register(() => _completion.TrySetCanceled()))
+            {
+                await _engine.InitializeAsync().ConfigureAwait(false);
 
-            var port = Rand.NextInt(10000, 20000);
+                var port = Rand.NextInt(10000, 20000);
 
-            await _engine.StartServiceAsync(port)
-                .ConfigureAwait(false);
-            await _socket.StartServiceAsync(port)
-                .ConfigureAwait(false);
+                await _engine.StartServiceAsync(port)
+                    .ConfigureAwait(false);
+                await _socket.StartServiceAsync(port)
+                    .ConfigureAwait(false);
 
-            await _completion.Task
-                .ConfigureAwait(false);
+                await _completion.Task.ConfigureAwait(false);
+            }
         }
 
         /// <inheritdoc />
