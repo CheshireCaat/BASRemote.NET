@@ -9,7 +9,7 @@ using BASRemote.Objects;
 namespace BASRemote
 {
     /// <inheritdoc cref="IBasFunction" />
-    internal sealed class BasFunction : IBasFunction, IClientContainer
+    internal sealed class BasFunction : IBasFunction, IClientContainer, IFunctionRunner<IBasFunction>
     {
         /// <summary>
         ///     Create an instance of <see cref="BasFunction" /> class.

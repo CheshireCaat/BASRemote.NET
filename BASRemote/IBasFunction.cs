@@ -1,11 +1,9 @@
-﻿using BASRemote.Interfaces;
-
-namespace BASRemote
+﻿namespace BASRemote
 {
     /// <summary>
     ///     Basic interface for interacting with BAS functions.
     /// </summary>
-    public interface IBasFunction : IFunctionRunner<IBasFunction>
+    public interface IBasFunction
     {
         /// <summary>
         ///     Gets current thread id.

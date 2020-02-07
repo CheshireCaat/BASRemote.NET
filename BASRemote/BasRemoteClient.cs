@@ -143,7 +143,8 @@ namespace BASRemote
         {
             EnsureClientStarted();
 
-            return new BasFunction(this).RunFunctionSync(functionName, functionParams, onResult, onError);
+            var functionObj = new BasFunction(this);
+            return functionObj.RunFunctionSync(functionName, functionParams, onResult, onError);
         }
 
         /// <inheritdoc />
@@ -151,7 +152,8 @@ namespace BASRemote
         {
             EnsureClientStarted();
 
-            return await new BasFunction(this)
+            var functionObj = new BasFunction(this);
+            return await functionObj
                 .RunFunction<TResult>(functionName, functionParams)
                 .ConfigureAwait(false);
         }
@@ -161,7 +163,8 @@ namespace BASRemote
         {
             EnsureClientStarted();
 
-            return await new BasFunction(this)
+            var functionObj = new BasFunction(this);
+            return await functionObj
                 .RunFunction(functionName, functionParams)
                 .ConfigureAwait(false);
         }
