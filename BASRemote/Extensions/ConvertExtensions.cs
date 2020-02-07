@@ -9,15 +9,15 @@ namespace BASRemote.Extensions
         {
             switch (source)
             {
-                case JObject jObject:
-                    return jObject.ToObject<T>();
-                case JArray jArray:
-                    return jArray.ToObject<T>();
-                case JValue jValue:
-                    return jValue.ToObject<T>();
-                default:
-                    return (T) source;
+                case JObject obj:
+                    return obj.ToObject<T>();
+                case JArray arr:
+                    return arr.ToObject<T>();
+                case JValue val:
+                    return val.ToObject<T>();
             }
+
+            return (T) System.Convert.ChangeType(source, typeof(T));
         }
 
         public static T FromJson<T>(this string source)

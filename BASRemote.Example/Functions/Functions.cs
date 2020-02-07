@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Threading;
+using System.Threading.Tasks;
 using BASRemote.Objects;
 
 namespace BASRemote.Example
 {
     public static partial class Functions
     {
-        public static void MultipleFunctionRun(IBasRemoteClient client)
+        public static async Task MultipleFunctionRun(IBasRemoteClient client)
         {
-            var wait1 = new ManualResetEventSlim(false);
-            var wait2 = new ManualResetEventSlim(false);
-            dynamic data1 = null;
-            dynamic data2 = null;
+            var tcs1 = new TaskCompletionSource<dynamic>();
+            var tcs2 = new TaskCompletionSource<dynamic>();
 
             client.RunFunctionSync("Add", new Params
             {
@@ -19,77 +17,63 @@ namespace BASRemote.Example
                 {"Y", 5}
             }, result1 =>
             {
-                data1 = result1;
-                wait1.Set();
+                tcs1.TrySetResult(result1);
 
                 client.RunFunctionSync("Add", new Params
-                {
-                    {"X", 10},
-                    {"Y", 15}
-                }, result2 =>
-                {
-                    data2 = result2;
-                    wait2.Set();
-                }, exception => { });
+                    {
+                        {"X", 10},
+                        {"Y", 15}
+                    },
+                    result2 => { tcs2.TrySetResult(result2); },
+                    exception => { });
             }, exception => { });
 
-            wait1.Wait();
-            wait2.Wait();
+            var values = await Task.WhenAll(tcs1.Task, tcs2.Task);
 
             Console.WriteLine();
             Console.WriteLine("[MultipleFunctionRun]");
-            Console.WriteLine($"Result #1 is: {data1}");
-            Console.WriteLine($"Result #2 is: {data2}");
+            Console.WriteLine($"Result #1 is: {values[0]}");
+            Console.WriteLine($"Result #2 is: {values[1]}");
         }
 
-        public static void NotExistingFunctionRun(IBasRemoteClient client)
+        public static async Task NotExistingFunctionRun(IBasRemoteClient client)
         {
-            var wait = new ManualResetEventSlim(false);
-            dynamic data = null;
+            var tcs = new TaskCompletionSource<dynamic>();
 
             client.RunFunctionSync("Add1",
                 new Params
                 {
                     {"X", 41},
                     {"Y", 51}
-                }, result =>
-                {
-                    data = result;
-                    wait.Set();
-                }, exception =>
-                {
-                    data = exception.Message;
-                    wait.Set();
-                });
+                },
+                result => tcs.TrySetResult(result),
+                exception => tcs.TrySetResult(exception.Message));
 
-            wait.Wait();
+            var value = await tcs.Task;
 
             Console.WriteLine();
             Console.WriteLine("[NotExistingFunctionRun]");
-            Console.WriteLine($"Result is: {data}");
+            Console.WriteLine($"Result is: {value}");
         }
 
-        public static void FunctionRun(IBasRemoteClient client)
+        public static async Task FunctionRun(IBasRemoteClient client)
         {
-            var wait = new ManualResetEventSlim(false);
-            dynamic data = null;
+            var tcs = new TaskCompletionSource<dynamic>();
 
             client.RunFunctionSync("Add",
                 new Params
                 {
                     {"X", 4},
                     {"Y", 5}
-                }, result =>
-                {
-                    data = result;
-                    wait.Set();
-                }, exception => { });
+                },
+                result => tcs.TrySetResult(result),
+                exception => { });
 
-            wait.Wait();
+            var value = await tcs.Task;
 
             Console.WriteLine();
             Console.WriteLine("[FunctionRun]");
-            Console.WriteLine($"Result is: {data}");
+            Console.WriteLine($"Result is: {value}");
         }
     }
 }

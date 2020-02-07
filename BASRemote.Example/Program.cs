@@ -16,8 +16,9 @@ namespace BASRemote.Example
                 await ThreadsRun(client);
 
                 Console.WriteLine("---------------------------------------------");
-                Console.ReadKey();
             }
+
+            Console.ReadKey();
         }
 
         private static async Task FunctionsRun(IBasRemoteClient client)
@@ -27,12 +28,9 @@ namespace BASRemote.Example
             await Functions.MultipleAsyncFunctionRun(client);
             await Functions.AsyncFunctionRun(client);
 
-            await Task.Run(() =>
-            {
-                Functions.NotExistingFunctionRun(client);
-                Functions.MultipleFunctionRun(client);
-                Functions.FunctionRun(client);
-            });
+            await Functions.NotExistingFunctionRun(client);
+            await Functions.MultipleFunctionRun(client);
+            await Functions.FunctionRun(client);
         }
 
         private static async Task ThreadsRun(IBasRemoteClient client)
@@ -42,12 +40,9 @@ namespace BASRemote.Example
             await Threads.MultipleAsyncFunctionRunWithThread(client);
             await Threads.AsyncFunctionRunWithThread(client);
 
-            await Task.Run(() =>
-            {
-                Threads.NotExistingFunctionRunWithThread(client);
-                Threads.MultipleFunctionRunWithThread(client);
-                Threads.FunctionRunWithThread(client);
-            });
+            await Threads.NotExistingFunctionRunWithThread(client);
+            await Threads.MultipleFunctionRunWithThread(client);
+            await Threads.FunctionRunWithThread(client);
         }
     }
 }
