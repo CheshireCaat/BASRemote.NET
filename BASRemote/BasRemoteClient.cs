@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using BASRemote.Exceptions;
+using BASRemote.Extensions;
 using BASRemote.Helpers;
 using BASRemote.Objects;
 using BASRemote.Services;
@@ -15,12 +16,12 @@ namespace BASRemote
         /// <summary>
         ///     Dictionary of generic requests handlers.
         /// </summary>
-        private readonly ConcurrentDictionary<int, object> _genericRequests = new ConcurrentDictionary<int, object>();
+        private readonly ConcurrentDictionary<int, Action<object>> _genericRequests = new ConcurrentDictionary<int, Action<object>>();
 
         /// <summary>
         ///     Dictionary of default requests handlers.
         /// </summary>
-        private readonly ConcurrentDictionary<int, object> _defaultRequests = new ConcurrentDictionary<int, object>();
+        private readonly ConcurrentDictionary<int, Action> _defaultRequests = new ConcurrentDictionary<int, Action>();
 
         /// <summary>
         /// 
@@ -148,19 +149,20 @@ namespace BASRemote
         /// <inheritdoc />
         public async Task<TResult> RunFunction<TResult>(string functionName, Params functionParams)
         {
-            var tcs = new TaskCompletionSource<TResult>();
+            EnsureClientStarted();
 
-            RunFunctionSync(functionName, functionParams,
-                result => tcs.TrySetResult((TResult)result),
-                exception => tcs.TrySetException(exception));
-
-            return await tcs.Task.ConfigureAwait(false);
+            return await new BasFunction(this)
+                .RunFunction<TResult>(functionName, functionParams)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         public async Task<dynamic> RunFunction(string functionName, Params functionParams)
         {
-            return await RunFunction<dynamic>(functionName, functionParams)
+            EnsureClientStarted();
+
+            return await new BasFunction(this)
+                .RunFunction(functionName, functionParams)
                 .ConfigureAwait(false);
         }
 
@@ -175,8 +177,9 @@ namespace BASRemote
         /// <inheritdoc />
         public async Task<dynamic> SendAndWaitAsync(string type, Params data = null)
         {
-            return await SendAndWaitAsync<dynamic>(type, data)
-                .ConfigureAwait(false);
+            var tcs = new TaskCompletionSource<dynamic>();
+            SendAsync(type, data, result => tcs.TrySetResult(result));
+            return await tcs.Task.ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -185,14 +188,18 @@ namespace BASRemote
             EnsureClientStarted();
 
             var message = new Message(data ?? Params.Empty, type, true);
-            _genericRequests.TryAdd(message.Id, onResult);
+            _genericRequests.TryAdd(message.Id, obj => onResult(obj.Convert<TResult>()));
             _socket.Send(message);
         }
 
         /// <inheritdoc />
         public void SendAsync(string type, Params data, Action<dynamic> onResult)
         {
-            SendAsync<dynamic>(type, data, onResult);
+            EnsureClientStarted();
+
+            var message = new Message(data ?? Params.Empty, type, true);
+            _genericRequests.TryAdd(message.Id, onResult);
+            _socket.Send(message);
         }
 
         /// <inheritdoc />
@@ -214,27 +221,19 @@ namespace BASRemote
         /// <inheritdoc />
         public void SendAsync<TResult>(string type, Action<TResult> onResult)
         {
-            EnsureClientStarted();
-
-            var message = new Message(Params.Empty, type, true);
-            _genericRequests.TryAdd(message.Id, onResult);
-            _socket.Send(message);
+            SendAsync(type, Params.Empty, onResult);
         }
 
         /// <inheritdoc />
         public void SendAsync(string type, Action<dynamic> onResult)
         {
-            SendAsync<dynamic>(type, onResult);
+            SendAsync(type, Params.Empty, onResult);
         }
 
         /// <inheritdoc />
         public void SendAsync(string type, Action onResult)
         {
-            EnsureClientStarted();
-
-            var message = new Message(Params.Empty, type, true);
-            _defaultRequests.TryAdd(message.Id, onResult);
-            _socket.Send(message);
+            SendAsync(type, Params.Empty, onResult);
         }
 
         /// <inheritdoc />
