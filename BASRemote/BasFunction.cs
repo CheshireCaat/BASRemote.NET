@@ -75,8 +75,13 @@ namespace BASRemote
         /// <inheritdoc />
         public async Task<dynamic> RunFunction(string functionName, Params functionParams)
         {
-            return await RunFunction<dynamic>(functionName, functionParams)
-                .ConfigureAwait(false);
+            var tcs = new TaskCompletionSource<dynamic>();
+
+            RunFunctionSync(functionName, functionParams,
+                result => tcs.TrySetResult(result),
+                exception => tcs.TrySetException(exception));
+
+            return await tcs.Task.ConfigureAwait(false);
         }
 
         /// <inheritdoc />
