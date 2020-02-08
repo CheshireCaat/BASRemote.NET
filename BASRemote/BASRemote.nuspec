@@ -16,7 +16,7 @@
 		<language>en-US</language>
 		<tags>bas bas-remote bas-client bas-remote-control bas-remote-client</tags>
 		<dependencies>	
-            <group targetFramework="net45">
+            <group targetFramework=".NETFramework4.5">
             	<dependency id="Newtonsoft.Json" version="12.0.3" />   	
             </group>	
         </dependencies>
