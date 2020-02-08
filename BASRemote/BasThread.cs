@@ -17,7 +17,7 @@ namespace BASRemote
         /// <param name="client">
         ///     Remote client object.
         /// </param>
-        internal BasThread(IBasRemoteClient client)
+        public BasThread(IBasRemoteClient client)
         {
             Client = client;
         }
@@ -42,7 +42,6 @@ namespace BASRemote
 
             if (Id == 0)
             {
-                IsRunning = true;
                 Id = Rand.NextInt(1, 1000000);
                 Client.Send("start_thread", new Params {{"thread_id", Id}});
             }
@@ -68,6 +67,7 @@ namespace BASRemote
                     }
                 });
 
+            IsRunning = true;
             return this;
         }
 

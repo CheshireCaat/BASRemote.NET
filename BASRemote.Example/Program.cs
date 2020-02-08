@@ -35,14 +35,14 @@ namespace BASRemote.Example
 
         private static async Task ThreadsRun(IBasRemoteClient client)
         {
-            await Threads.ParallelAsyncFunctionRunWithThread(client);
-            await Threads.NotExistingAsyncFunctionRunWithThread(client);
-            await Threads.MultipleAsyncFunctionRunWithThread(client);
-            await Threads.AsyncFunctionRunWithThread(client);
+            await Threads.ParallelAsyncFunctionRun(client);
+            await Threads.NotExistingAsyncFunctionRun(client);
+            await Threads.MultipleAsyncFunctionRun(client);
+            await Threads.AsyncFunctionRun(client);
 
-            await Threads.NotExistingFunctionRunWithThread(client);
-            await Threads.MultipleFunctionRunWithThread(client);
-            await Threads.FunctionRunWithThread(client);
+            await Threads.NotExistingFunctionRun(client);
+            await Threads.MultipleFunctionRun(client);
+            await Threads.FunctionRun(client);
         }
     }
 }

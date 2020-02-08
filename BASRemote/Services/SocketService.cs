@@ -10,7 +10,7 @@ using WebSocketSharp;
 namespace BASRemote.Services
 {
     /// <summary>
-    ///     Service that provides methods for interacting with a BAS socket.
+    ///     Service that provides methods for interacting with BAS socket.
     /// </summary>
     internal sealed class SocketService : BaseService
     {

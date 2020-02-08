@@ -9,7 +9,7 @@ namespace BASRemote.Example
 {
     public static partial class Threads
     {
-        public static async Task ParallelAsyncFunctionRunWithThread(IBasRemoteClient client)
+        public static async Task ParallelAsyncFunctionRun(IBasRemoteClient client)
         {
             var threads = new List<IBasThread>
             {
@@ -31,12 +31,12 @@ namespace BASRemote.Example
             foreach (var thread in threads) thread.Stop();
 
             Console.WriteLine();
-            Console.WriteLine("[ParallelAsyncFunctionRunWithThread]");
+            Console.WriteLine("[ParallelAsyncFunctionRun]");
             Console.WriteLine($"Result #1 is: {result[0]}");
             Console.WriteLine($"Result #2 is: {result[1]}");
         }
 
-        public static async Task MultipleAsyncFunctionRunWithThread(IBasRemoteClient client)
+        public static async Task MultipleAsyncFunctionRun(IBasRemoteClient client)
         {
             var thread = client.CreateThread();
 
@@ -55,14 +55,14 @@ namespace BASRemote.Example
                 });
 
             Console.WriteLine();
-            Console.WriteLine("[MultipleAsyncFunctionRunWithThread]");
+            Console.WriteLine("[MultipleAsyncFunctionRun]");
             Console.WriteLine($"Result #1 is: {result1}");
             Console.WriteLine($"Result #2 is: {result2}");
 
             thread.Stop();
         }
 
-        public static async Task NotExistingAsyncFunctionRunWithThread(IBasRemoteClient client)
+        public static async Task NotExistingAsyncFunctionRun(IBasRemoteClient client)
         {
             var thread = client.CreateThread();
             object result;
@@ -82,13 +82,13 @@ namespace BASRemote.Example
             }
 
             Console.WriteLine();
-            Console.WriteLine("[NotExistingAsyncFunctionRunWithThread]");
+            Console.WriteLine("[NotExistingAsyncFunctionRun]");
             Console.WriteLine($"Result is: {result}");
 
             thread.Stop();
         }
 
-        public static async Task AsyncFunctionRunWithThread(IBasRemoteClient client)
+        public static async Task AsyncFunctionRun(IBasRemoteClient client)
         {
             var thread = client.CreateThread();
 
@@ -100,7 +100,7 @@ namespace BASRemote.Example
                 });
 
             Console.WriteLine();
-            Console.WriteLine("[AsyncFunctionRunWithThread]");
+            Console.WriteLine("[AsyncFunctionRun]");
             Console.WriteLine($"Result is: {result}");
 
             thread.Stop();

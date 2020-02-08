@@ -7,7 +7,7 @@ namespace BASRemote.Example
 {
     public static partial class Threads
     {
-        public static async Task MultipleFunctionRunWithThread(IBasRemoteClient client)
+        public static async Task MultipleFunctionRun(IBasRemoteClient client)
         {
             var thread = client.CreateThread();
             object data1 = null;
@@ -32,12 +32,12 @@ namespace BASRemote.Example
             thread.Stop();
 
             Console.WriteLine();
-            Console.WriteLine("[MultipleFunctionRunWithThread]");
+            Console.WriteLine("[MultipleFunctionRun]");
             Console.WriteLine($"Result #1 is: {data1}");
             Console.WriteLine($"Result #2 is: {data2}");
         }
 
-        public static async Task NotExistingFunctionRunWithThread(IBasRemoteClient client)
+        public static async Task NotExistingFunctionRun(IBasRemoteClient client)
         {
             var thread = client.CreateThread();
             object data = null;
@@ -55,11 +55,11 @@ namespace BASRemote.Example
             thread.Stop();
 
             Console.WriteLine();
-            Console.WriteLine("[NotExistingFunctionRunWithThread]");
+            Console.WriteLine("[NotExistingFunctionRun]");
             Console.WriteLine($"Result is: {data}");
         }
 
-        public static async Task FunctionRunWithThread(IBasRemoteClient client)
+        public static async Task FunctionRun(IBasRemoteClient client)
         {
             var thread = client.CreateThread();
             object data = null;
@@ -77,7 +77,7 @@ namespace BASRemote.Example
             thread.Stop();
 
             Console.WriteLine();
-            Console.WriteLine("[FunctionRunWithThread]");
+            Console.WriteLine("[FunctionRun]");
             Console.WriteLine($"Result is: {data}");
         }
     }
