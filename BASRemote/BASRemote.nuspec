@@ -10,18 +10,18 @@
 		<projectUrl>https://github.com/CheshireCaat/BASRemote.NET</projectUrl>
 		<icon>tools\basremote-icon.png</icon>
 		<description>
-    	.NET library that allows you to remotely manage private scripts created using BAS. This uses a portable version of the engine to execute the script (FastExecuteScript). Interaction with the script is based on the same principles as the web interface (via the WebSocket connection).
+    	.NET library, which allows you to use projects created in BAS in your C# applications, work with ready-made functions and perform other actions.
     	</description>
 		<copyright>Copyright 2020</copyright>
 		<language>en-US</language>
-		<tags>bas bas-remote bas-client bas-remote-control bas-remote-client</tags>
-		<dependencies>	
-            <group targetFramework=".NETFramework4.5">
-            	<dependency id="Newtonsoft.Json" version="12.0.3" />   	
-            </group>	
-        </dependencies>
+		<tags>bas bas-remote bas-client bas-remote-control bas-remote-client automation cef browser macros visual-programming-language bot bot-framework poster grabber ide windows-desktop chromium imacros browserautomationstudio bas</tags>
+		<dependencies>
+			<group targetFramework=".NETFramework4.5">
+				<dependency id="Newtonsoft.Json" version="12.0.3" />
+			</group>
+		</dependencies>
 	</metadata>
 	<files>
-    	<file src="..\tools\basremote-icon.png" target="tools\" />
-    </files>
+		<file src="..\tools\basremote-icon.png" target="tools\" />
+	</files>
 </package>
