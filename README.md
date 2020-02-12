@@ -105,7 +105,7 @@ You can use _TestRemoteControl_ projet in order to test BASRemote.NET library. I
 * ```GoogleSearch(Query)``` - performs Google query, returns result as a list of urls.
 
 
-Project source code can be downloaded ![here](https://drive.google.com/uc?id=1WQYzm-XaZhXUBWQYMM5T-sZ_tdcSfAwS&export=download)
+Project source code can be downloaded [here](https://drive.google.com/uc?id=1WQYzm-XaZhXUBWQYMM5T-sZ_tdcSfAwS&export=download)
 
 
 # Dependencies
