@@ -138,35 +138,21 @@ namespace BASRemote
         }
 
         /// <inheritdoc />
-        public IBasFunction RunFunctionSync(string functionName, Params functionParams, Action<dynamic> onResult,
-            Action<Exception> onError)
+        public IBasFunction RunFunction<TResult>(string functionName, Params functionParams)
         {
             EnsureClientStarted();
 
             var functionObj = new BasFunction(this);
-            return functionObj.RunFunctionSync(functionName, functionParams, onResult, onError);
+            return functionObj.RunFunction<TResult>(functionName, functionParams);
         }
 
         /// <inheritdoc />
-        public async Task<TResult> RunFunction<TResult>(string functionName, Params functionParams)
+        public IBasFunction RunFunction(string functionName, Params functionParams)
         {
             EnsureClientStarted();
 
             var functionObj = new BasFunction(this);
-            return await functionObj
-                .RunFunction<TResult>(functionName, functionParams)
-                .ConfigureAwait(false);
-        }
-
-        /// <inheritdoc />
-        public async Task<dynamic> RunFunction(string functionName, Params functionParams)
-        {
-            EnsureClientStarted();
-
-            var functionObj = new BasFunction(this);
-            return await functionObj
-                .RunFunction(functionName, functionParams)
-                .ConfigureAwait(false);
+            return functionObj.RunFunction(functionName, functionParams);
         }
 
         /// <inheritdoc />

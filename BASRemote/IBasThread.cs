@@ -1,4 +1,5 @@
-﻿using BASRemote.Interfaces;
+﻿using System.Threading.Tasks;
+using BASRemote.Interfaces;
 
 namespace BASRemote
 {
@@ -7,6 +8,19 @@ namespace BASRemote
     /// </summary>
     public interface IBasThread : IFunctionRunner<IBasThread>
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult">
+        ///
+        /// </typeparam>
+        Task<TResult> GetTask<TResult>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        Task<dynamic> GetTask();
+
         /// <summary>
         ///     Check if thread is already busy with running function.
         /// </summary>

@@ -5,7 +5,7 @@ namespace BASRemote.Exceptions
     [Serializable]
     public sealed class AuthenticationException : Exception
     {
-        private const string ExceptionMessage = " Unsuccessful authentication. ";
+        private const string ExceptionMessage = "Unsuccessful authentication. ";
 
         internal AuthenticationException()
             : base(ExceptionMessage)

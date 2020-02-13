@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using BASRemote.Exceptions;
 using BASRemote.Extensions;
@@ -11,6 +12,8 @@ namespace BASRemote
     /// <inheritdoc cref="IBasThread" />
     internal sealed class BasThread : IBasThread, IClientContainer
     {
+        private TaskCompletionSource<dynamic> _completion;
+
         /// <summary>
         ///     Create an instance of <see cref="BasThread" /> class.
         /// </summary>
@@ -32,7 +35,56 @@ namespace BASRemote
         public int Id { get; private set; }
 
         /// <inheritdoc />
-        public IBasThread RunFunctionSync(string functionName, Params functionParams, Action<dynamic> onResult,
+        public IBasThread RunFunction<TResult>(string functionName, Params functionParams)
+        {
+            _completion = new TaskCompletionSource<dynamic>();
+
+            RunFunctionInternal(functionName, functionParams,
+                result => _completion.TrySetResult(((object) result).Convert<TResult>()),
+                exception => _completion.TrySetException(exception));
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IBasThread RunFunction(string functionName, Params functionParams)
+        {
+            _completion = new TaskCompletionSource<dynamic>();
+
+            RunFunctionInternal(functionName, functionParams,
+                result => _completion.TrySetResult(result),
+                exception => _completion.TrySetException(exception));
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+        public Task<TResult> GetTask<TResult>()
+        {
+            var completion = new TaskCompletionSource<TResult>();
+
+            _completion.Task.ContinueWith(task =>
+            {
+                if (task.IsFaulted)
+                    completion.TrySetException(task.Exception.InnerExceptions);
+                else
+                    completion.TrySetResult((TResult) task.Result);
+            });
+
+            return completion.Task;
+        }
+
+        /// <inheritdoc />
+        public Task<dynamic> GetTask()
+        {
+            return _completion.Task;
+        }
+
+        private void RunFunctionInternal(
+            string functionName,
+            Params functionParams,
+            Action<dynamic> onResult,
             Action<Exception> onError)
         {
             if (Id != 0 && IsRunning)
@@ -68,31 +120,6 @@ namespace BASRemote
                 });
 
             IsRunning = true;
-            return this;
-        }
-
-        /// <inheritdoc />
-        public async Task<TResult> RunFunction<TResult>(string functionName, Params functionParams)
-        {
-            var tcs = new TaskCompletionSource<TResult>();
-
-            RunFunctionSync(functionName, functionParams,
-                result => tcs.TrySetResult(((object) result).Convert<TResult>()),
-                exception => tcs.TrySetException(exception));
-
-            return await tcs.Task.ConfigureAwait(false);
-        }
-
-        /// <inheritdoc />
-        public async Task<dynamic> RunFunction(string functionName, Params functionParams)
-        {
-            var tcs = new TaskCompletionSource<dynamic>();
-
-            RunFunctionSync(functionName, functionParams,
-                result => tcs.TrySetResult(result),
-                exception => tcs.TrySetException(exception));
-
-            return await tcs.Task.ConfigureAwait(false);
         }
 
         /// <inheritdoc />
