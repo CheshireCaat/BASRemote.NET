@@ -44,6 +44,12 @@ namespace BASRemote
         }
 
         /// <inheritdoc />
+        public IBasFunction RunFunction(string functionName)
+        {
+            return RunFunction(functionName, Params.Empty);
+        }
+
+        /// <inheritdoc />
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public Task<TResult> GetTask<TResult>()
         {

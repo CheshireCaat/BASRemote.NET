@@ -20,5 +20,13 @@ namespace BASRemote.Interfaces
         ///     BAS function arguments list.
         /// </param>
         TRunner RunFunction(string functionName, Params functionParams);
+
+        /// <summary>
+        ///     Call the BAS function asynchronously.
+        /// </summary>
+        /// <param name="functionName">
+        ///     BAS function name as string.
+        /// </param>
+        TRunner RunFunction(string functionName);
     }
 }

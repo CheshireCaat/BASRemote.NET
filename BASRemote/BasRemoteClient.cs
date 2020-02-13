@@ -118,16 +118,9 @@ namespace BASRemote
 
             var port = Rand.NextInt(10000, 20000);
 
-            await _engine.StartServiceAsync(port)
-                .ConfigureAwait(false);
-            await _socket.StartServiceAsync(port)
-                .ConfigureAwait(false);
+            await _engine.StartServiceAsync(port).ConfigureAwait(false);
+            await _socket.StartServiceAsync(port).ConfigureAwait(false);
 
-            await StartClient().ConfigureAwait(false);
-        }
-
-        private async Task StartClient()
-        {
             using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60)))
             {
                 using (cts.Token.Register(() => _completion.TrySetCanceled()))
@@ -144,6 +137,12 @@ namespace BASRemote
 
             var functionObj = new BasFunction(this);
             return functionObj.RunFunction(functionName, functionParams);
+        }
+
+        /// <inheritdoc />
+        public IBasFunction RunFunction(string functionName)
+        {
+            return RunFunction(functionName, Params.Empty);
         }
 
         /// <inheritdoc />
