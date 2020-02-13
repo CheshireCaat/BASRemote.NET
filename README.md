@@ -53,7 +53,7 @@ using (var ScriptClient = new BASRemote.BasRemoteClient(ScriptOptions))
 	//Set parameters for function
 	var ScriptParams = new BASRemote.Objects.Params
 	{
-    	["Query"] = "cats"
+    		["Query"] = "cats"
 	};
 
 	//Run function and wait for result
@@ -66,7 +66,7 @@ using (var ScriptClient = new BASRemote.BasRemoteClient(ScriptOptions))
 	//Iterate and output results
 	foreach(var Link in Result)
 	{
-    	Console.WriteLine(Link);
+    		Console.WriteLine(Link);
 	}
 
 }
