@@ -10,7 +10,7 @@
 		<projectUrl>https://github.com/CheshireCaat/BASRemote.NET</projectUrl>
 		<icon>tools\basremote-icon.png</icon>
 		<description>
-    	.NET library, which allows you to use projects created in BAS in your C# applications, work with ready-made functions and perform other actions.
+    	.NET library, which allows you to automate Google Chrome browser.
     	</description>
 		<copyright>Copyright 2020</copyright>
 		<language>en-US</language>

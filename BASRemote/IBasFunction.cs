@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using BASRemote.Interfaces;
+﻿using BASRemote.Interfaces;
 
 namespace BASRemote
 {

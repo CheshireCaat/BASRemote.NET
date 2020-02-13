@@ -9,12 +9,20 @@ namespace BASRemote
     public sealed class Options
     {
         /// <summary>
+        ///     Create an instance of <see cref="Options" /> class.
+        /// </summary>
+        public Options()
+        {
+            WorkingDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
+        }
+
+        /// <summary>
         ///     Location of the selected working folder.
         /// </summary>
         public string WorkingDirectory { get; set; }
 
         /// <summary>
-        ///     Name of the selected private script. 
+        ///     Name of the selected private script.
         /// </summary>
         public string ScriptName { get; set; }
 
@@ -27,13 +35,5 @@ namespace BASRemote
         ///     Login from a user account with access to the script.
         /// </summary>
         public string Login { get; set; }
-
-        /// <summary>
-        ///     Create an instance of <see cref="Options" /> class.
-        /// </summary>
-        public Options()
-        {
-            WorkingDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
-        }
     }
 }
