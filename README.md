@@ -38,7 +38,7 @@ Install package via NuGet:
 Following code will search for _cats_ query in Google and output result into console. You can just copy paste this code and run it.
 
 ```csharp
-//Set script name, and optionally auth details(login, password) 
+//Set script name, and optionally auth details (login, password) 
 var ScriptOptions = new BASRemote.Options
 {
 	ScriptName = "TestRemoteControl" /* or "YourScriptName" */
@@ -53,20 +53,20 @@ using (var ScriptClient = new BASRemote.BasRemoteClient(ScriptOptions))
 	//Set parameters for function
 	var ScriptParams = new BASRemote.Objects.Params
 	{
-    		["Query"] = "cats"
+    	["Query"] = "cats"
 	};
 
 	//Run function and wait for result
 	//Following function will return list of strings
-	var Result = await ScriptClient.RunFunction<string[]>(
+	var Result = await ScriptClient.RunFunction(
 		"GoogleSearch", /* or "YourFunctionName" */
 		ScriptParams
-	);
+	).GetTask<string[]>();
 
 	//Iterate and output results
 	foreach(var Link in Result)
 	{
-    		Console.WriteLine(Link);
+    	Console.WriteLine(Link);
 	}
 
 }
