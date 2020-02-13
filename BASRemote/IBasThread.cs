@@ -1,26 +1,12 @@
-﻿using System.Threading.Tasks;
-using BASRemote.Interfaces;
+﻿using BASRemote.Interfaces;
 
 namespace BASRemote
 {
     /// <summary>
     ///     Basic interface for interacting with BAS threads.
     /// </summary>
-    public interface IBasThread : IFunctionRunner<IBasThread>
+    public interface IBasThread : ITaskContainer, IFunctionRunner<IBasThread>
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TResult">
-        ///
-        /// </typeparam>
-        Task<TResult> GetTask<TResult>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        Task<dynamic> GetTask();
-
         /// <summary>
         ///     Check if thread is already busy with running function.
         /// </summary>

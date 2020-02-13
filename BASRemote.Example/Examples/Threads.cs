@@ -20,7 +20,7 @@ namespace BASRemote.Example
             var result = await Task.WhenAll(Enumerable.Range(1, 2).Select(x =>
             {
                 var y = x * 2;
-                return threads[x - 1].RunFunction<int>("Add",
+                return threads[x - 1].RunFunction("Add",
                     new Params
                     {
                         {"X", x},
@@ -40,14 +40,14 @@ namespace BASRemote.Example
         {
             var thread = client.CreateThread();
 
-            var result1 = await thread.RunFunction<int>("Add",
+            var result1 = await thread.RunFunction("Add",
                 new Params
                 {
                     {"X", 4},
                     {"Y", 5}
                 }).GetTask<int>();
 
-            var result2 = await thread.RunFunction<int>("Add",
+            var result2 = await thread.RunFunction("Add",
                 new Params
                 {
                     {"X", 6},
@@ -69,7 +69,7 @@ namespace BASRemote.Example
 
             try
             {
-                result = await thread.RunFunction<int>("Add1",
+                result = await thread.RunFunction("Add1",
                     new Params
                     {
                         {"X", 4},
@@ -92,7 +92,7 @@ namespace BASRemote.Example
         {
             var thread = client.CreateThread();
 
-            var result = await thread.RunFunction<int>("Add",
+            var result = await thread.RunFunction("Add",
                 new Params
                 {
                     {"X", 0},

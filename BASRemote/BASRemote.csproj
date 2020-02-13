@@ -52,6 +52,7 @@
     <Compile Include="IBasFunction.cs" />
     <Compile Include="Interfaces\IClientContainer.cs" />
     <Compile Include="Interfaces\IFunctionRunner.cs" />
+    <Compile Include="Interfaces\ITaskContainer.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Exceptions\AlreadyRunningException.cs" />
     <Compile Include="Exceptions\FunctionException.cs" />

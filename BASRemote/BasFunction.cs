@@ -32,18 +32,6 @@ namespace BASRemote
         public int Id { get; private set; }
 
         /// <inheritdoc />
-        public IBasFunction RunFunction<TResult>(string functionName, Params functionParams)
-        {
-            _completion = new TaskCompletionSource<dynamic>();
-
-            RunFunctionInternal(functionName, functionParams,
-                result => _completion.TrySetResult(((object) result).Convert<TResult>()),
-                exception => _completion.TrySetException(exception));
-
-            return this;
-        }
-
-        /// <inheritdoc />
         public IBasFunction RunFunction(string functionName, Params functionParams)
         {
             _completion = new TaskCompletionSource<dynamic>();
@@ -66,7 +54,7 @@ namespace BASRemote
                 if (task.IsFaulted)
                     completion.TrySetException(task.Exception.InnerExceptions);
                 else
-                    completion.TrySetResult((TResult) task.Result);
+                    completion.TrySetResult(((object) task.Result).Convert<TResult>());
             });
 
             return completion.Task;

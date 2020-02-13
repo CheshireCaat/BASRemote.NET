@@ -13,7 +13,7 @@ namespace BASRemote.Example
             var result = await Task.WhenAll(Enumerable.Range(1, 2).Select(x =>
             {
                 var y = x * 2;
-                return client.RunFunction<int>("Add",
+                return client.RunFunction("Add",
                     new Params
                     {
                         {"X", x},
@@ -29,14 +29,14 @@ namespace BASRemote.Example
 
         public static async Task MultipleAsyncFunctionRun(IBasRemoteClient client)
         {
-            var result1 = await client.RunFunction<int>("Add",
+            var result1 = await client.RunFunction("Add",
                 new Params
                 {
                     {"X", 4},
                     {"Y", 5}
                 }).GetTask<int>();
 
-            var result2 = await client.RunFunction<int>("Add",
+            var result2 = await client.RunFunction("Add",
                 new Params
                 {
                     {"X", 6},
@@ -55,7 +55,7 @@ namespace BASRemote.Example
 
             try
             {
-                result = await client.RunFunction<int>("Add1",
+                result = await client.RunFunction("Add1",
                     new Params
                     {
                         {"X", 4},
@@ -74,7 +74,7 @@ namespace BASRemote.Example
 
         public static async Task AsyncFunctionRun(IBasRemoteClient client)
         {
-            var result = await client.RunFunction<int>("Add",
+            var result = await client.RunFunction("Add",
                 new Params
                 {
                     {"X", 0},

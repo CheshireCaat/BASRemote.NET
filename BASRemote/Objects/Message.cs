@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 namespace BASRemote.Objects
 {
     /// <summary>
+    ///     Class that represents default BAS message.
     /// </summary>
     public sealed class Message
     {

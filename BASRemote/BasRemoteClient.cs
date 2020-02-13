@@ -138,15 +138,6 @@ namespace BASRemote
         }
 
         /// <inheritdoc />
-        public IBasFunction RunFunction<TResult>(string functionName, Params functionParams)
-        {
-            EnsureClientStarted();
-
-            var functionObj = new BasFunction(this);
-            return functionObj.RunFunction<TResult>(functionName, functionParams);
-        }
-
-        /// <inheritdoc />
         public IBasFunction RunFunction(string functionName, Params functionParams)
         {
             EnsureClientStarted();

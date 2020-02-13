@@ -11,21 +11,7 @@ namespace BASRemote.Interfaces
     public interface IFunctionRunner<out TRunner>
     {
         /// <summary>
-        ///     Call the BAS function asynchronously and get the result.
-        /// </summary>
-        /// <param name="functionName">
-        ///     BAS function name as string.
-        /// </param>
-        /// <param name="functionParams">
-        ///     BAS function arguments list.
-        /// </param>
-        /// <typeparam name="TResult">
-        ///     The type of function result.
-        /// </typeparam>
-        TRunner RunFunction<TResult>(string functionName, Params functionParams);
-
-        /// <summary>
-        ///     Call the BAS function asynchronously and get the result.
+        ///     Call the BAS function asynchronously.
         /// </summary>
         /// <param name="functionName">
         ///     BAS function name as string.

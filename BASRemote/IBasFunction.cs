@@ -1,25 +1,13 @@
 ﻿using System.Threading.Tasks;
+using BASRemote.Interfaces;
 
 namespace BASRemote
 {
     /// <summary>
     ///     Basic interface for interacting with BAS functions.
     /// </summary>
-    public interface IBasFunction
+    public interface IBasFunction : ITaskContainer
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TResult">
-        ///
-        /// </typeparam>
-        Task<TResult> GetTask<TResult>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        Task<dynamic> GetTask();
-
         /// <summary>
         ///     Gets current thread id.
         /// </summary>
