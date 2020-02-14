@@ -9,11 +9,13 @@ namespace BASRemote.Exceptions
         {
         }
 
-        internal FunctionException(string message) : base(message)
+        internal FunctionException(string message)
+            : base(message)
         {
         }
 
-        internal FunctionException(string message, Exception inner) : base(message, inner)
+        internal FunctionException(string message, Exception inner)
+            : base(message, inner)
         {
         }
     }

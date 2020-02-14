@@ -1,11 +1,9 @@
-﻿using BASRemote.Interfaces;
-
-namespace BASRemote
+﻿namespace BASRemote
 {
     /// <summary>
     ///     Basic interface for interacting with BAS threads.
     /// </summary>
-    public interface IBasThread : ITaskContainer, IFunctionRunner<IBasThread>
+    public interface IBasThread : IFunctionTask, IFunctionRunner<IBasThread>
     {
         /// <summary>
         ///     Check if thread is already busy with running function.

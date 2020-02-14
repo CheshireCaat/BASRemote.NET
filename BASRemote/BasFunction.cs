@@ -4,13 +4,12 @@ using System.Threading.Tasks;
 using BASRemote.Exceptions;
 using BASRemote.Extensions;
 using BASRemote.Helpers;
-using BASRemote.Interfaces;
 using BASRemote.Objects;
 
 namespace BASRemote
 {
     /// <inheritdoc cref="IBasFunction" />
-    internal sealed class BasFunction : IBasFunction, IClientContainer, IFunctionRunner<IBasFunction>
+    internal sealed class BasFunction : IBasFunction, IFunctionRunner<IBasFunction>
     {
         private TaskCompletionSource<dynamic> _completion;
 
@@ -25,8 +24,10 @@ namespace BASRemote
             Client = client;
         }
 
-        /// <inheritdoc />
-        public IBasRemoteClient Client { get; }
+        /// <summary>
+        ///     Remote client object.
+        /// </summary>
+        private IBasRemoteClient Client { get; }
 
         /// <inheritdoc />
         public int Id { get; private set; }
@@ -36,7 +37,7 @@ namespace BASRemote
         {
             _completion = new TaskCompletionSource<dynamic>();
 
-            RunFunctionInternal(functionName, functionParams,
+            RunFunction(functionName, functionParams,
                 result => _completion.TrySetResult(result),
                 exception => _completion.TrySetException(exception));
 
@@ -57,10 +58,14 @@ namespace BASRemote
 
             _completion.Task.ContinueWith(task =>
             {
-                if (task.IsFaulted)
-                    completion.TrySetException(task.Exception.InnerExceptions);
-                else
+                if (!task.IsFaulted)
+                {
                     completion.TrySetResult(((object) task.Result).Convert<TResult>());
+                }
+                else
+                {
+                    completion.TrySetException(task.Exception.InnerExceptions);
+                }
             });
 
             return completion.Task;
@@ -78,7 +83,7 @@ namespace BASRemote
             Client.Send("stop_thread", new Params {{"thread_id", Id}});
         }
 
-        private void RunFunctionInternal(
+        private void RunFunction(
             string functionName,
             Params functionParams,
             Action<dynamic> onResult,
@@ -90,11 +95,11 @@ namespace BASRemote
             Client.SendAsync<string>("run_task",
                 new Params
                 {
-                    {"params", functionParams.ToJson()},
-                    {"function_name", functionName},
-                    {"thread_id", Id}
+                    ["params"] = functionParams.ToJson(),
+                    ["function_name"] = functionName,
+                    ["thread_id"] = Id
                 }, result =>
-                {
+               {
                     var response = result.FromJson<Response>();
 
                     if (!response.Success)

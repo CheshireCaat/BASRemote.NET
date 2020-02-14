@@ -1,6 +1,6 @@
 ﻿using BASRemote.Objects;
 
-namespace BASRemote.Interfaces
+namespace BASRemote
 {
     /// <summary>
     ///     Basic interface for running BAS functions.

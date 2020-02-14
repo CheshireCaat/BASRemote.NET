@@ -29,12 +29,12 @@ namespace BASRemote
         private readonly TaskCompletionSource<bool> _completion = new TaskCompletionSource<bool>();
 
         /// <summary>
-        ///     Engine service provider object.
+        ///     Client engine service object.
         /// </summary>
         private EngineService _engine;
 
         /// <summary>
-        ///     Socket service provider object.
+        ///     Client socket service object.
         /// </summary>
         private SocketService _socket;
 

@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 
-namespace BASRemote.Interfaces
+namespace BASRemote
 {
     /// <summary>
-    /// 
     /// </summary>
-    public interface ITaskContainer
+    public interface IFunctionTask
     {
         /// <summary>
+        ///     Get generic task object.
         /// </summary>
         /// <typeparam name="TResult">
         ///     The type of task result.
@@ -15,6 +15,7 @@ namespace BASRemote.Interfaces
         Task<TResult> GetTask<TResult>();
 
         /// <summary>
+        ///     Get default task object.
         /// </summary>
         Task<dynamic> GetTask();
     }

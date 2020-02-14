@@ -50,9 +50,8 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Helpers\FileLock.cs" />
     <Compile Include="IBasFunction.cs" />
-    <Compile Include="Interfaces\IClientContainer.cs" />
-    <Compile Include="Interfaces\IFunctionRunner.cs" />
-    <Compile Include="Interfaces\ITaskContainer.cs" />
+    <Compile Include="IFunctionRunner.cs" />
+    <Compile Include="IFunctionTask.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Exceptions\AlreadyRunningException.cs" />
     <Compile Include="Exceptions\FunctionException.cs" />
@@ -90,5 +89,6 @@
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
