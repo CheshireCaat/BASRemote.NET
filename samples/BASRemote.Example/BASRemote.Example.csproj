@@ -39,9 +39,6 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\BasThreadEx.cs" />
-    <Compile Include="Examples\Functions.cs" />
-    <Compile Include="Examples\Threads.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -49,7 +46,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BASRemote\BASRemote.csproj">
+    <ProjectReference Include="..\..\src\BASRemote\BASRemote.csproj">
       <Project>{db81b150-de02-48db-afe6-c9118a4525d0}</Project>
       <Name>BASRemote</Name>
     </ProjectReference>

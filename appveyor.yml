@@ -12,7 +12,7 @@ before_build:
   - nuget restore BASRemote.NET.sln
   
 after_build:
-  - cmd: cd BASRemote.Tests
+  - cmd: cd tests\BASRemote.IntegrationTests
   - cmd: dotnet test
 
 assembly_info:

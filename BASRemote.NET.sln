@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote", "BASRemote\BASRemote.csproj", "{DB81B150-DE02-48DB-AFE6-C9118A4525D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote", "src\BASRemote\BASRemote.csproj", "{DB81B150-DE02-48DB-AFE6-C9118A4525D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote.Tests", "BASRemote.Tests\BASRemote.Tests.csproj", "{B90DF73E-0FF8-4C94-8354-D9A97021285B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote.IntegrationTests", "tests\BASRemote.IntegrationTests\BASRemote.IntegrationTests.csproj", "{B90DF73E-0FF8-4C94-8354-D9A97021285B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote.Example", "BASRemote.Example\BASRemote.Example.csproj", "{B4423BE8-40DB-4271-8BB2-56C42913D39A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASRemote.Example", "samples\BASRemote.Example\BASRemote.Example.csproj", "{B4423BE8-40DB-4271-8BB2-56C42913D39A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

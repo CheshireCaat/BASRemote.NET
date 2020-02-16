@@ -7,8 +7,8 @@
     <ProjectGuid>{B90DF73E-0FF8-4C94-8354-D9A97021285B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BASRemote.Tests</RootNamespace>
-    <AssemblyName>BASRemote.Tests</AssemblyName>
+    <RootNamespace>BASRemote.IntegrationTests</RootNamespace>
+    <AssemblyName>BASRemote.IntegrationTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -40,12 +40,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\BaseTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\EngineServiceTests.cs" />
-    <Compile Include="Services\SocketServiceTests.cs" />
+    <Compile Include="FunctionsTests.cs" />
+    <Compile Include="ThreadsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MSTest.TestAdapter">
@@ -56,10 +58,13 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BASRemote\BASRemote.csproj">
+    <ProjectReference Include="..\..\src\BASRemote\BASRemote.csproj">
       <Project>{DB81B150-DE02-48DB-AFE6-C9118A4525D0}</Project>
       <Name>BASRemote</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
