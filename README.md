@@ -83,6 +83,7 @@ Previous example used _TestRemoteControl_ project and _GoogleSearch_ function de
 * Start [record mode](https://i.imgur.com/JrV7ua5.png) and create new function by using [function manager](https://i.imgur.com/yAjLu8v.png). BAS functions works like functions in any other languages. They can be called with parameters and can return value as a result. Functions help to incapsulate and reuse your code.
 * Implement it. On following step you need to implement required functionality. Place code into the function that you have created on previous step. They will be called from C# code later. Function parameters will be sent from C# to BAS, while return value will be sent from BAS to C#. Working with BAS is out of scope of this article, check [BAS wiki](https://wiki.bablosoft.com/doku.php) for more info.
 * Compile it and give it a name. Check this [article](https://wiki.bablosoft.com/doku.php?id=how_to_protect_your_script) more more instruction for compilation.
+* Finally, **allow remote function execution** flag for script must be set. You can do that on following [page](https://bablosoft.com/bas/scripts). See [screenshot](https://i.imgur.com/BrkefIT.png) for more details.
 
 After project with function is prepared, you can use it from C#. In order to do that, change script and function name in example above.
 
