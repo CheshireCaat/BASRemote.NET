@@ -80,12 +80,12 @@ namespace BASRemote
                 {
                     if (_genericRequests.TryRemove(message.Id, out var genericFunction))
                     {
-                        (genericFunction as dynamic)(message.Data);
+                        genericFunction(message.Data);
                     }
 
                     if (_defaultRequests.TryRemove(message.Id, out var defaultFunction))
                     {
-                        (defaultFunction as dynamic)();
+                        defaultFunction();
                     }
                 }
             };
