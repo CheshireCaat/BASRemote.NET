@@ -120,9 +120,9 @@ This library has dependencies on several excellent libraries:
 
 # License
 
-BASRemote.NET has MIT license.
+**BASRemote.NET** has MIT license.
 
-You can distribute applications using BASRemote.NET library, including commercial, to user, who don't have BAS premium subscription without any fees.
+You can distribute applications using **BASRemote.NET** library, including commercial, to user, who don't have BAS premium subscription without any fees.
 
 In order to create project with custom functions you need to have a BAS premium subscription.
 
