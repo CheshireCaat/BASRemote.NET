@@ -11,66 +11,77 @@ namespace BASRemote.IntegrationTests
     public class FunctionsTests : BaseTest
     {
         [TestMethod]
-        public async Task ParallelAsyncFunctionRun()
+        [DataRow(1, 3)]
+        [DataRow(3, 5)]
+        [DataRow(5, 7)]
+        public async Task ParallelAsyncFunctionRun(int start, int count)
         {
-            var result = await Task.WhenAll(Enumerable.Range(1, 3).Select(x =>
-            {
-                var y = x * 2;
-                return Client.RunFunction("Add",
+            var range = GetRange(start, count);
+            var expected = range.Select(x => x + x * 2).ToArray();
+
+            var result = await Task.WhenAll(range
+                .Select(x => Client.RunFunction("Add",
                     new Params
                     {
                         {"X", x},
-                        {"Y", y}
-                    }).GetTask<int>();
-            }));
+                        {"Y", x * 2}
+                    }).GetTask<int>()));
 
-            Assert.IsTrue(result.Length == 3);
-            CollectionAssert.AreEqual(new[] {3, 6, 9}, result);
+            CollectionAssert.AreEqual(expected, result);
         }
 
         [TestMethod]
-        public async Task MultipleAsyncFunctionRun()
+        [DataRow(0, 0, 0)]
+        [DataRow(0, 1, 1)]
+        [DataRow(1, 0, 1)]
+        public async Task MultipleAsyncFunctionRun(int x, int y, int sum)
         {
             var result1 = await Client.RunFunction("Add",
                 new Params
                 {
-                    {"X", 4},
-                    {"Y", 5}
+                    {"X", x},
+                    {"Y", y}
                 }).GetTask<int>();
 
             var result2 = await Client.RunFunction("Add",
                 new Params
                 {
-                    {"X", 6},
-                    {"Y", 7}
+                    {"X", x + 1},
+                    {"Y", y + 1}
                 }).GetTask<int>();
 
-            Assert.AreEqual(9, result1);
-            Assert.AreEqual(13, result2);
+            Assert.AreEqual(sum, result1);
+            Assert.AreEqual(sum + 2, result2);
         }
 
         [TestMethod]
-        public async Task NotExistingAsyncFunctionRun()
+        [DataRow(0, 0)]
+        [DataRow(0, 1)]
+        [DataRow(1, 0)]
+        public async Task NotExistingAsyncFunctionRun(int x, int y)
         {
             await Assert.ThrowsExceptionAsync<FunctionException>(() => Client.RunFunction("Add1",
                 new Params
                 {
-                    {"X", 4},
-                    {"Y", 5}
+                    {"X", x},
+                    {"Y", y}
                 }).GetTask<int>());
         }
 
         [TestMethod]
-        public async Task AsyncFunctionRun()
+        [DataRow(0, 0, 0)]
+        [DataRow(0, 1, 1)]
+        [DataRow(1, 0, 1)]
+        public async Task AsyncFunctionRun(int x, int y, int sum)
         {
             var result = await Client.RunFunction("Add",
                 new Params
                 {
-                    {"X", 0},
-                    {"Y", 0}
+                    {"X", x},
+                    {"Y", y}
                 }).GetTask<int>();
 
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(sum, result);
         }
     }
 }

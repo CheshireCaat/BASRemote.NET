@@ -6,42 +6,24 @@ namespace BASRemote.Example
 {
     internal static class Program
     {
-        private static BasRemoteClient _client;
-
         private static async Task Main()
         {
-            Console.WriteLine("[Google Search Example]");
-
-            using (_client = new BasRemoteClient(new Options {ScriptName = "TestRemoteControl"}))
+            using (var client = new BasRemoteClient(new Options {ScriptName = "TestRemoteControl"}))
             {
-                await _client.Start();
+                await client.Start();
 
-                while (true)
+                var arguments = new Params {["Query"] = "cats"};
+                var result = await client
+                    .RunFunction("GoogleSearch", arguments)
+                    .GetTask<string[]>();
+
+                foreach (var link in result)
                 {
-                    Console.Write("Specify search query (or enter 'exit' to close app): ");
-                    var query = Console.ReadLine();
-
-                    if (query == "exit")
-                    {
-                        break;
-                    }
-
-                    await GoogleSearch(query);
+                    Console.WriteLine(link);
                 }
             }
 
             Console.ReadKey();
-        }
-
-        private static async Task GoogleSearch(string query)
-        {
-            var function = _client.RunFunction("GoogleSearch", new Params {["Query"] = query});
-            var results = await function.GetTask();
-
-            foreach (var result in results)
-            {
-                Console.WriteLine($"[!] - {result}");
-            }
         }
     }
 }

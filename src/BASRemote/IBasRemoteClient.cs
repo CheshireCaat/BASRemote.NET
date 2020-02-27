@@ -10,6 +10,11 @@ namespace BASRemote
     public interface IBasRemoteClient : IDisposable, IFunctionRunner<IBasFunction>
     {
         /// <summary>
+        ///     Gets a value that indicates whether the current client is already running.
+        /// </summary>
+        bool IsStarted { get; }
+
+        /// <summary>
         ///     Occurs when client receives any event message from script.
         /// </summary>
         event Action<Message> OnMessageReceived;
@@ -35,7 +40,7 @@ namespace BASRemote
         event Action OnEngineDownloadEnded;
 
         /// <summary>
-        ///     Occurs when client ens extracting executable file.
+        ///     Occurs when client ends extracting executable file.
         /// </summary>
         event Action OnEngineExtractEnded;
 

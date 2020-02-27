@@ -13,8 +13,6 @@ namespace BASRemote
     /// <inheritdoc cref="IBasRemoteClient" />
     public sealed class BasRemoteClient : IBasRemoteClient
     {
-        /// <summary>
-        /// </summary>
         private readonly TaskCompletionSource<bool> _completion = new TaskCompletionSource<bool>();
 
         /// <summary>
@@ -128,6 +126,9 @@ namespace BASRemote
             add => _engine.OnExtractEnded += value;
             remove => _engine.OnExtractEnded -= value;
         }
+
+        /// <inheritdoc />
+        public bool IsStarted => _completion.Task.IsCompleted;
 
         /// <inheritdoc />
         public async Task Start()
@@ -266,7 +267,7 @@ namespace BASRemote
 
         private void EnsureClientStarted()
         {
-            if (!_completion.Task.IsCompleted) throw new ClientNotStartedException();
+            if (!IsStarted) throw new ClientNotStartedException();
         }
     }
 }
