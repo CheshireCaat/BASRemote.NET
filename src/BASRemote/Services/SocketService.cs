@@ -53,7 +53,7 @@ namespace BASRemote.Services
         /// <param name="port">
         ///     Selected port number.
         /// </param>
-        public override async Task StartServiceAsync(int port)
+        public override async Task StartAsync(int port)
         {
             _socket = new WebSocket($"ws://127.0.0.1:{port}")
             {
@@ -64,14 +64,14 @@ namespace BASRemote.Services
             {
                 _buffer += args.Data;
 
-                var split = _buffer.Split("---Message--End---");
+                var buffer = _buffer.Split("---Message--End---");
 
-                for (var i = 0; i < split.Length - 1; i++)
+                for (var i = 0; i < buffer.Length - 1; i++)
                 {
-                    OnMessageReceived?.Invoke(split[i].FromJson<Message>());
+                    OnMessageReceived?.Invoke(buffer[i].FromJson<Message>());
                 }
 
-                _buffer = split.Last();
+                _buffer = buffer.Last();
             };
 
             _socket.OnOpen += (sender, args) =>

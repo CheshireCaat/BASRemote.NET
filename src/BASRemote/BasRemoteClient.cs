@@ -14,19 +14,20 @@ namespace BASRemote
     public sealed class BasRemoteClient : IBasRemoteClient
     {
         /// <summary>
+        /// </summary>
+        private readonly TaskCompletionSource<bool> _completion = new TaskCompletionSource<bool>();
+
+        /// <summary>
         ///     Dictionary of generic requests handlers.
         /// </summary>
-        private readonly ConcurrentDictionary<int, Action<object>> _genericRequests = new ConcurrentDictionary<int, Action<object>>();
+        private readonly ConcurrentDictionary<int, Action<object>> _genericRequests =
+            new ConcurrentDictionary<int, Action<object>>();
 
         /// <summary>
         ///     Dictionary of default requests handlers.
         /// </summary>
-        private readonly ConcurrentDictionary<int, Action> _defaultRequests = new ConcurrentDictionary<int, Action>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private readonly TaskCompletionSource<bool> _completion = new TaskCompletionSource<bool>();
+        private readonly ConcurrentDictionary<int, Action> _defaultRequests =
+            new ConcurrentDictionary<int, Action>();
 
         /// <summary>
         ///     Client engine service object.
@@ -49,67 +50,84 @@ namespace BASRemote
             _engine = new EngineService(options);
             _socket = new SocketService(options);
 
-            _engine.OnDownloadStarted += () => OnEngineDownloadStarted?.Invoke();
-            _engine.OnExtractStarted += () => OnEngineExtractStarted?.Invoke();
-
-            _engine.OnDownloadEnded += () => OnEngineDownloadEnded?.Invoke();
-            _engine.OnExtractEnded += () => OnEngineExtractEnded?.Invoke();
-
             _socket.OnMessageReceived += message =>
             {
-                OnMessageReceived?.Invoke(message.Type, message.Data);
-
-                if (message.Type == "message")
+                switch (message.Type)
                 {
-                    _completion.TrySetException(new AuthenticationException((string) message.Data["text"]));
-                }
-
-                if (message.Type == "thread_start")
-                {
-                    _completion.TrySetResult(true);
-                }
-
-                if (message.Type == "initialize")
-                {
-                    _socket.Send("accept_resources", new Params
+                    case "message":
+                        _completion.TrySetException(new AuthenticationException((string) message.Data["text"]));
+                        break;
+                    case "thread_start":
+                        _completion.TrySetResult(true);
+                        break;
+                    case "initialize":
+                        _socket.Send("accept_resources", new Params
+                        {
+                            {"-bas-empty-script-", true}
+                        });
+                        break;
+                    default:
                     {
-                        {"-bas-empty-script-", true}
-                    });
-                }
-                else if (message.Async && message.Id != 0)
-                {
-                    if (_genericRequests.TryRemove(message.Id, out var genericFunction))
-                    {
-                        genericFunction(message.Data);
-                    }
+                        if (message.Async && message.Id != 0)
+                        {
+                            if (_genericRequests.TryRemove(message.Id, out var genericFunction))
+                            {
+                                genericFunction(message.Data);
+                            }
 
-                    if (_defaultRequests.TryRemove(message.Id, out var defaultFunction))
-                    {
-                        defaultFunction();
+                            if (_defaultRequests.TryRemove(message.Id, out var defaultFunction))
+                            {
+                                defaultFunction();
+                            }
+                        }
+
+                        break;
                     }
                 }
             };
-
-            _socket.OnMessageSent += message => OnMessageSent?.Invoke(message);
         }
 
         /// <inheritdoc />
-        public event Action<string, dynamic> OnMessageReceived;
+        public event Action<Message> OnMessageReceived
+        {
+            add => _socket.OnMessageReceived += value;
+            remove => _socket.OnMessageReceived -= value;
+        }
 
         /// <inheritdoc />
-        public event Action<Message> OnMessageSent;
+        public event Action<Message> OnMessageSent
+        {
+            add => _socket.OnMessageSent += value;
+            remove => _socket.OnMessageSent -= value;
+        }
 
         /// <inheritdoc />
-        public event Action OnEngineDownloadStarted;
+        public event Action OnEngineDownloadStarted
+        {
+            add => _engine.OnDownloadStarted += value;
+            remove => _engine.OnDownloadStarted -= value;
+        }
 
         /// <inheritdoc />
-        public event Action OnEngineExtractStarted;
+        public event Action OnEngineExtractStarted
+        {
+            add => _engine.OnExtractStarted += value;
+            remove => _engine.OnExtractStarted -= value;
+        }
 
         /// <inheritdoc />
-        public event Action OnEngineDownloadEnded;
+        public event Action OnEngineDownloadEnded
+        {
+            add => _engine.OnDownloadEnded += value;
+            remove => _engine.OnDownloadEnded -= value;
+        }
 
         /// <inheritdoc />
-        public event Action OnEngineExtractEnded;
+        public event Action OnEngineExtractEnded
+        {
+            add => _engine.OnExtractEnded += value;
+            remove => _engine.OnExtractEnded -= value;
+        }
 
         /// <inheritdoc />
         public async Task Start()
@@ -118,8 +136,8 @@ namespace BASRemote
 
             var port = Rand.NextInt(10000, 20000);
 
-            await _engine.StartServiceAsync(port).ConfigureAwait(false);
-            await _socket.StartServiceAsync(port).ConfigureAwait(false);
+            await _engine.StartAsync(port).ConfigureAwait(false);
+            await _socket.StartAsync(port).ConfigureAwait(false);
 
             using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60)))
             {
@@ -231,14 +249,6 @@ namespace BASRemote
             return message.Id;
         }
 
-        private void EnsureClientStarted()
-        {
-            if (!_completion.Task.IsCompleted)
-            {
-                throw new ClientNotStartedException();
-            }
-        }
-
         /// <inheritdoc />
         public IBasThread CreateThread()
         {
@@ -252,6 +262,11 @@ namespace BASRemote
             _socket?.Dispose();
             _engine = null;
             _socket = null;
+        }
+
+        private void EnsureClientStarted()
+        {
+            if (!_completion.Task.IsCompleted) throw new ClientNotStartedException();
         }
     }
 }

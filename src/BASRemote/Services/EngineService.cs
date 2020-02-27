@@ -82,7 +82,7 @@ namespace BASRemote.Services
         /// <param name="port">
         ///     Selected port number.
         /// </param>
-        public override async Task StartServiceAsync(int port)
+        public override async Task StartAsync(int port)
         {
             var version = Environment.Is64BitOperatingSystem ? 64 : 32;
             var zipName = $"FastExecuteScriptProtected.x{version}";
@@ -160,8 +160,8 @@ namespace BASRemote.Services
         private async Task ExtractExecutable(string zipPath)
         {
             OnExtractStarted?.Invoke();
-
-            using (var zip = new FileStream(zipPath, FileMode.Open))
+            
+            using (var zip = File.OpenRead(zipPath))
             {
                 using (var archive = new ZipArchive(zip, ZipArchiveMode.Read))
                 {
@@ -173,7 +173,7 @@ namespace BASRemote.Services
                         {
                             Directory.CreateDirectory(Path.GetDirectoryName(path) ?? throw new InvalidOperationException());
 
-                            using (Stream stream = entry.Open(), file = File.Open(path, FileMode.Create, FileAccess.Write))
+                            using (Stream stream = entry.Open(), file = File.OpenWrite(path))
                             {
                                 await stream.CopyToAsync(file).ConfigureAwait(false);
                             }
@@ -195,8 +195,8 @@ namespace BASRemote.Services
             (
                 new ProcessStartInfo
                 {
-                    Arguments = $"--remote-control --remote-control-port={port}",
                     FileName = Path.Combine(ExeDirectory, "FastExecuteScript.exe"),
+                    Arguments = $"--remote-control --remote-control-port={port}",
                     WorkingDirectory = ExeDirectory,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

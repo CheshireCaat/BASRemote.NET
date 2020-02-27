@@ -29,6 +29,6 @@ namespace BASRemote.Services
         /// <param name="port">
         ///     Selected port number.
         /// </param>
-        public abstract Task StartServiceAsync(int port);
+        public abstract Task StartAsync(int port);
     }
 }

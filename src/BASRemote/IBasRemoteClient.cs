@@ -12,7 +12,7 @@ namespace BASRemote
         /// <summary>
         ///     Occurs when client receives any event message from script.
         /// </summary>
-        event Action<string, dynamic> OnMessageReceived;
+        event Action<Message> OnMessageReceived;
 
         /// <summary>
         ///     Occurs when client sends any event message to script.
