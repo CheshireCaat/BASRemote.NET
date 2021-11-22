@@ -25,7 +25,7 @@ assembly_info:
 deploy:
   - provider: NuGet
     api_key:
-      secure: 0kI/E6vKNAtR5RcHodtKMAI/7zxURJxUznyo1Su+UiCkiaD5d/BfE8PxCxvjtu0p
+      secure: oy2iu7viphenqpvv6cqq6sejwf2fha6upojjnjvj27ii2q
     on:
       branch: master
 
