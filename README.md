@@ -1,8 +1,9 @@
 # BASRemote.NET
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build status](https://ci.appveyor.com/api/projects/status/se1coyoqblwm0imd?svg=true)](https://ci.appveyor.com/project/CheshireCaat/basremote-net)
 [![NuGet version](https://badge.fury.io/nu/BASRemote.svg)](https://badge.fury.io/nu/BASRemote)
+[![Build status](https://ci.appveyor.com/api/projects/status/se1coyoqblwm0imd?svg=true)](https://ci.appveyor.com/project/CheshireCaat/basremote-net)
+[![GitHub issues](https://img.shields.io/github/issues/CheshireCaat/BASRemote.NET)](https://github.com/CheshireCaat/BASRemote.NET/issues)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **BASRemote** - .NET library, which allows you to **automate Google Chrome browser**. In order to make it possible, BrowserAutomationStudio application is used. BASRemote allows you to call and control execution of functions created in BAS. Consider following example, you have a BAS function, which executes specified Google search query and returns result as a list of urls. Using this library, you can call that function in any C# application and obtain result. You can distribute applications written with BASRemote library as well.
 
