@@ -12,7 +12,7 @@
 		<description>
     	.NET library, which allows you to automate Google Chrome browser.
     	</description>
-		<copyright>Copyright 2020</copyright>
+		<copyright>Copyright 2021</copyright>
 		<language>en-US</language>
 		<tags>bas bas-remote bas-client bas-remote-control bas-remote-client automation cef browser macros visual-programming-language bot bot-framework poster grabber ide windows-desktop chromium imacros browserautomationstudio bas</tags>
 		<dependencies>
