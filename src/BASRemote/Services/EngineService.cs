@@ -34,6 +34,7 @@ namespace BASRemote.Services
         {
             ScriptDirectory = Path.Combine(Options.WorkingDirectory, "run", Options.ScriptName);
             EngineDirectory = Path.Combine(Options.WorkingDirectory, "engine");
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
         }
 
         /// <summary>
