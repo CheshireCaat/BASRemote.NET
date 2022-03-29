@@ -131,7 +131,7 @@ namespace BASRemote
         public bool IsStarted => _completion.Task.IsCompleted;
 
         /// <inheritdoc />
-        public async Task Start()
+        public async Task Start(double timeout = 60000)
         {
             await _engine.InitializeAsync().ConfigureAwait(false);
 
@@ -140,7 +140,7 @@ namespace BASRemote
             await _engine.StartAsync(port).ConfigureAwait(false);
             await _socket.StartAsync(port).ConfigureAwait(false);
 
-            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60)))
+            using (var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(timeout)))
             {
                 using (cts.Token.Register(() => _completion.TrySetCanceled()))
                 {

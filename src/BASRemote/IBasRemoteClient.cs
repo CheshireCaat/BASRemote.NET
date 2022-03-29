@@ -188,6 +188,9 @@ namespace BASRemote
         /// <summary>
         ///     Start the client and wait for it initialize.
         /// </summary>
-        Task Start();
+        /// <param name="timeout">
+        ///     Client initialization timeout (in milliseconds).
+        /// </param>
+        Task Start(double timeout = 60000);
     }
 }
