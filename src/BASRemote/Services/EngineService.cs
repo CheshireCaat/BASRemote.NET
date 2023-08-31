@@ -143,7 +143,7 @@ namespace BASRemote.Services
         /// <param name="urlName"></param>
         private async Task DownloadExecutable(string zipPath, string zipName, string urlName)
         {
-            var url = $"{Endpoint}/distr/{urlName}/{Path.GetFileName(ZipDirectory)}/{zipName}.zip";
+            var url = $"http://downloads.bablosoft.com/distr/{urlName}/{Path.GetFileName(ZipDirectory)}/{zipName}.zip";
 
             using (var client = new WebClient())
             {
@@ -197,7 +197,7 @@ namespace BASRemote.Services
                 new ProcessStartInfo
                 {
                     FileName = Path.Combine(ExeDirectory, "FastExecuteScript.exe"),
-                    Arguments = $"--remote-control --remote-control-port={port}",
+                    Arguments = $"--remote-control-port={port} --remote-control",
                     WorkingDirectory = ExeDirectory,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

@@ -96,9 +96,9 @@ Following diagram will explain project architecture:
 
 # Project example
 
-You can use _TestRemoteControl_ project in order to test BASRemote.NET library. It is already uploaded into the cloud and can be used without authentication. List of available functions:
+You can use _TestRemoteControl_ project in order to test **BASRemote.NET** library. It is already uploaded into the cloud and can be used without authentication. List of available functions:
 
-- `Add(X,Y)` - adds to numbers return their sum.
+- `Add(X,Y)` - adds two numbers and return their sum.
 - `SetProxy(Proxy,IsSocks5)` - sets proxy for current thread. _Proxy_ param is proxy string, _IsSocks5_ is string("true", "false") value indicates if proxy type is socks5. No return value.
 - `CheckIp()` - returns remote IP of current thread. Uses ip.bablosoft.com service to test. Can be combined with _SetProxy_ function.
 - `GoogleSearch(Query)` - performs Google query, returns result as a list of urls.

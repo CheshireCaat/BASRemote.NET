@@ -58,13 +58,13 @@ namespace BASRemote
 
             _completion.Task.ContinueWith(task =>
             {
-                if (!task.IsFaulted)
+                if (task.IsFaulted)
                 {
-                    completion.TrySetResult(((object) task.Result).Convert<TResult>());
+                    completion.TrySetException(task.Exception.InnerExceptions);
                 }
                 else
                 {
-                    completion.TrySetException(task.Exception.InnerExceptions);
+                    completion.TrySetResult(((object)task.Result).Convert<TResult>());
                 }
             });
 
@@ -99,16 +99,16 @@ namespace BASRemote
                     ["function_name"] = functionName,
                     ["thread_id"] = Id
                 }, result =>
-               {
+                {
                     var response = result.FromJson<Response>();
 
-                    if (!response.Success)
+                    if (response.Success)
                     {
-                        onError(new FunctionException(response.Message));
+                        onResult(response.Result);
                     }
                     else
                     {
-                        onResult(response.Result);
+                        onError(new FunctionException(response.Message));
                     }
 
                     Client.Send("stop_thread", new Params {{"thread_id", Id}});

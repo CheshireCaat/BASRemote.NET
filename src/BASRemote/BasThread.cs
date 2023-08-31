@@ -61,13 +61,13 @@ namespace BASRemote
 
             _completion.Task.ContinueWith(task =>
             {
-                if (!task.IsFaulted)
+                if (task.IsFaulted)
                 {
-                    completion.TrySetResult(((object) task.Result).Convert<TResult>());
+                    completion.TrySetException(task.Exception.InnerExceptions);
                 }
                 else
                 {
-                    completion.TrySetException(task.Exception.InnerExceptions);
+                    completion.TrySetResult(((object)task.Result).Convert<TResult>());
                 }
             });
 
@@ -120,13 +120,13 @@ namespace BASRemote
                     var response = result.FromJson<Response>();
                     IsRunning = false;
 
-                    if (!response.Success)
+                    if (response.Success)
                     {
-                        onError(new FunctionException(response.Message));
+                        onResult(response.Result);
                     }
                     else
                     {
-                        onResult(response.Result);
+                        onError(new FunctionException(response.Message));
                     }
                 });
 
